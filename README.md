@@ -20,7 +20,7 @@ manager (Diane), modelled as goal models in Assignment 2, and specified and buil
 | 2 | GitHub Version 2 (revised goal model, spec, Spec Kit artifacts, source) | [`v2` branch](https://github.com/mattezwang/rfis_hw3_repo/tree/v2) (tag `v2.0`) |
 | 3 | Prototype V1 (deployed) | <https://mattezwang.github.io/rfis_hw3_repo/v1/> |
 | 4 | Prototype V2 (deployed) | <https://mattezwang.github.io/rfis_hw3_repo/v2/> |
-| 5 | Requirements analysis and learning log | [docs/learning-log.md](docs/learning-log.md) *(to be written in Step 6)* |
+| 5 | Requirements analysis and learning log | [docs/learning-log.md](docs/learning-log.md) |
 
 ## What changed from V1 to V2
 
@@ -75,9 +75,3 @@ Use the buttons at the top to switch between **Rider (Janelle)**, **Dispatcher (
 [quickstart](specs/001-same-day-changes/quickstart.md) lists scenarios to try. For example,
 change Janelle's return trip to 16:30 (confirmed immediately), 15:45 (sent to the dispatcher)
 or 15:15 (exceeds wheelchair capacity).
-
-## Roles and Responsibilities
-
-| Member | Contributions |
-|---|---|
-| Matthew Wang | Sole member. Conducted the stakeholder interviews and built the goal models (Assignments 1 and 2). Selected the sprint scope, analysed goal relationships and made the conflict decisions. Directed and reviewed the Spec Kit artifacts and implementation produced with an AI coding agent (Claude Code, as permitted for this assignment), evaluated the prototypes, and wrote the learning log. |
