@@ -1,5 +1,6 @@
 """
-Sprint goal model for Assignment 3 (V1): same-day trip changes and cancellations.
+Sprint goal model for Assignment 3 (V2): same-day trip changes and cancellations.
+V1 of this model is preserved at git tag v1.0.
 
 Derived from hw2-baseline/goal_model_combined.py. Running this file writes
 sprint-mermaid.txt next to it. The analysis behind every change is in
@@ -26,12 +27,27 @@ GOALS REWRITTEN FOR THE SPRINT (combined-model text -> sprint text)
   G-126  "...If no other rider window or capacity affected" ->
   G-127  the concrete test chosen for "affected" (decision on C-1, assumption A-3).
 
+V2 CHANGES (Step 5, from the V1 evaluation in ../evaluation-v1.md)
+  G-150  Rider shown own estimated arrival time before and after a change   inferred, O-2
+           Janelle 00:36:47 "plan my workday and my trip home with less uncertainty"
+           Janelle 00:37:58 "make it home in time for my attendant's evening visit"
+           G-2 (her top priority) moves from deferred to partly in scope.
+  G-151  Rider offered nearest pickup times that would be confirmed immediately  inferred, O-1/O-4
+           Refines the C-2 decision: only the rider's own trip is used, so G-129 still holds.
+  G-152  Rider told when the van cannot reach the requested window          inferred, O-3
+  G-153  Affected riders and reasons summarized above the route impact      inferred, O-9
+  O-6    Obstacle: accepted change makes another rider late without notice  UNRESOLVED (O-6)
+  Still open after V2 (kept, not resolved): C-7 (Q-4), pending time limit (Q-2),
+  meaning of "affected" (Q-3), which stops count as changed on the manifest (Q-6, O-5),
+  telling riders made late by an accepted change (Q-7, O-6).
+
 COLOUR KEY (classDef at the end of the diagram)
   green   in sprint scope, stated in a transcript
   yellow  in sprint scope, not stated in any transcript (Assignment 2 convention)
   blue    parent goal the sprint contributes to but does not complete
   grey    outside the sprint boundary (deferred, kept for context)
-  red border  new or rewritten in Assignment 3
+  red border  new or rewritten in Assignment 3 (V1)
+  purple border  new in V2
 
 Deferred subtrees are collapsed to a single grey goal. Their full refinement is
 unchanged in the combined model.
@@ -71,8 +87,14 @@ g19 = MaintainGoal("G-19: Outcome or pending status shown within 1 minute of sub
 
 g130 = MaintainGoal("G-130: Rider shown only own new window and approval need",
                     performs=sw("TripPortal"), leaf=True)
+# G-151 | NEW in V2, inferred | O-1, O-4: a way forward when a change cannot be confirmed
+g151 = AchieveGoal("G-151: Rider offered nearest pickup times that would be confirmed immediately <b>If</b> requested change cannot be",
+                   performs=sw("TripPortal"), leaf=True)
+# G-152 | NEW in V2, inferred | O-3: the requester's own window cannot be met
+g152 = AchieveGoal("G-152: Rider told the van cannot reach the requested window <b>If</b> own window unreachable",
+                   performs=sw("TripPortal"), leaf=True)
 g79 = AchieveGoal("G-79: Rider sees effect of change before submitting",
-                  refinements=[Refinement(False, [g130], "H4")])
+                  refinements=[Refinement(False, [g130, g151, g152], "H4")])
 
 g9 = AchieveGoal("G-9: Rider manages own trips online and makes routine changes without calling",
                  refinements=[Refinement(False, [g11, g12, g13, g14, g19, g79], "H7")])
@@ -93,8 +115,11 @@ g75 = AchieveGoal("G-75: Every affected rider and window shown",
 g76 = MaintainGoal("G-76: Capacity, mobility needs and pickup windows visible together on one board",
                    performs=sw("DispatchBoard"), leaf=True)
 g132 = AchieveGoal("G-132: Overtime and deadhead effect of a fix shown with route impact")  # deferred
+# G-153 | NEW in V2, inferred | O-9: Frank asked for "every rider and window that gets hit"
+g153 = AchieveGoal("G-153: Affected riders and reasons summarized above the route impact",
+                   performs=sw("DispatchBoard"), leaf=True)
 g72 = AchieveGoal("G-72: Whole route impact shown <b>If</b> same-day change affects another rider window or capacity",
-                  refinements=[Refinement(False, [g75, g76, g132], "P5")])
+                  refinements=[Refinement(False, [g75, g76, g153, g132], "P5")])
 
 g74 = AchieveGoal("G-74: Change applied <b>If</b> dispatcher accepts after seeing impact",
                   performs=env("Dispatcher"), leaf=True)
@@ -166,7 +191,13 @@ g38 = SoftGoal("G-38: Improve stability of daily runs",
 
 # ------------------------------------------------------------ rider goals
 
-g2 = AchieveGoal("G-2: Rider home in time for attendant evening visit")     # deferred
+g6 = AchieveGoal("G-6: Return trip booked to arrive before attendant visit")   # deferred
+g8 = AchieveGoal("G-8: Rider home before attendant visit <b>If</b> picked up within window")  # deferred
+# G-150 | NEW in V2, inferred | O-2: Janelle's question is "will I be home in time?"
+g150 = AchieveGoal("G-150: Rider shown own estimated arrival time before and after a change",
+                   performs=sw("TripPortal"), leaf=True)
+g2 = AchieveGoal("G-2: Rider home in time for attendant evening visit",
+                 refinements=[Refinement(False, [g6, g150, g8], "H4")])
 g4 = AchieveGoal("G-4: Rider boards assigned vehicle safely without rushing")  # deferred
 g5 = SoftGoal("G-5: Maximize ability of riders and staff to use system independently and without confusion",
               refinements=[Refinement(False, [g36, g37, g76], "H3")])
@@ -196,8 +227,11 @@ g124 = SoftGoal("G-124: Maximize reliable, compliant and cost-responsible paratr
 # ---------------------------------------------------------------- obstacles
 
 o3 = Obstacle("O-3: Rider changes trip without seeing route impact")
+# O-6 | NEW in V2 | unresolved: needs Frank's answer on how riders are told today (Q-7)
+o6 = Obstacle("O-6: Accepted change makes another rider late without notice")
 
 links = [ObstructionLink(g41, o3), ResolutionLink(g79, o3),
+         ObstructionLink(g41, o6),   # no resolution in V2 (O-6 left open)
          ConflictLink(g14, g73),     # C-1  compromise G-125..G-128, unvalidated
          ConflictLink(g79, g129),    # C-2  resolved by G-130
          ConflictLink(g9, g41),      # C-7  NEW, unresolved
@@ -207,11 +241,12 @@ links = [ObstructionLink(g41, o3), ResolutionLink(g79, o3),
 
 scope_stated = [g12, g13, g17, g37, g74, g75, g76, g77, g79, g64, g148]
 scope_inferred = [g14, g18, g19, g36, g53, g67, g72, g73, g125, g126, g127,
-                  g128, g129, g130, g145, g146, g149]
-partial = [g1, g3, g5, g9, g29, g38, g40, g41, g50, g65, g7, g45, g124]
-deferred = [g2, g4, g10, g11, g27, g42, g52, g66, g68, g70, g98, g103, g90,
+                  g128, g129, g130, g145, g146, g149, g150, g151, g152, g153]
+partial = [g1, g2, g3, g5, g9, g29, g38, g40, g41, g50, g65, g7, g45, g124]
+deferred = [g4, g6, g8, g10, g11, g27, g42, g52, g66, g68, g70, g98, g103, g90,
             g109, g93, g86, g132]
 changed = [g12, g67, g126, g127, g146, g148, g149]
+v2_new = [g150, g151, g152, g153, g2]
 
 
 def style(diagram):
@@ -223,11 +258,13 @@ def style(diagram):
         "classDef partial fill:#DCEBFA,color:#000",
         "classDef deferred fill:#EEEEEE,color:#777,stroke:#AAA,stroke-dasharray:4 3",
         "classDef changed stroke:#D32F2F,stroke-width:4",
+        "classDef v2 stroke:#6A1B9A,stroke-width:5",
         f"class {ids(scope_stated)} stated",
         f"class {ids(scope_inferred)} yellow",
         f"class {ids(partial)} partial",
         f"class {ids(deferred)} deferred",
         f"class {ids(changed)} changed",
+        f"class {ids(v2_new)} v2",
     ]) + "\n"
 
 

@@ -4,13 +4,20 @@
 
 **Created**: 2026-11-18
 
-**Status**: Draft (V1)
+**Status**: Revised (V2). V1 is preserved at git tag `v1.0`
 
 **Input**: User description: "Same-day trip changes and cancellations for paratransit riders. A rider changes or cancels a trip online. Each change is decided by its route impact: changes that affect no one else are confirmed immediately, and changes that push another rider outside their pickup window or exceed vehicle capacity go to the dispatcher, who reviews the impact and accepts or declines. The driver's manifest reflects accepted changes only. Scope, goals and decisions are those in docs/goal-model.md Steps 1–2."
 
 **Sources**: the goal IDs (`G-n`), conflicts (`C-n`), overlaps (`OV-n`), dependencies (`DP-n`), assumptions (`A-n`) and open questions (`Q-n`) referenced here are defined in [docs/goal-model.md](../../docs/goal-model.md) and [docs/models/goal_model_sprint.py](../../docs/models/goal_model_sprint.py). Interview evidence is cited as *Stakeholder HH:MM:SS* from [docs/interviews/](../../docs/interviews/). Requirements marked **Inferred** are not stated in any interview.
 
 **Stakeholders**: Janelle (rider, uses a larger-than-standard wheelchair, travels five days a week), Frank (dispatcher, 19 years), Diane (paratransit budget manager).
+
+## Revision History
+
+| Version | Date | Summary |
+|---|---|---|
+| V1 (tag `v1.0`) | 2026-11-18 | Initial specification |
+| V2 | 2026-11-18 | Revised from the V1 evaluation ([docs/evaluation-v1.md](../../docs/evaluation-v1.md)). New: FR-025 (rider's own arrival time, O-2), FR-026 (offer pickup times that confirm immediately, O-1 and O-4), FR-027 (explain an unreachable window, O-3), FR-028 (affected-rider summary for the dispatcher, O-9). Amended: FR-004, FR-005, A-17 (fixed simulated time, O-10). New: A-19, SC-009, SC-010, Q-6, Q-7. Unchanged and still open: O-5, O-6, O-7, O-8. Sections changed in V2 are marked **(V2)**. |
 
 ## Selected Stakeholder Goals
 
@@ -20,7 +27,7 @@ The goals inside the sprint boundary ([docs/goal-model.md §1.3](../../docs/goal
 |---|---|---|---|
 | **Parent goals (partially satisfied by this sprint)** | | | |
 | G-1 | Improve rider independence and certainty on daily trips | Janelle | All rider requirements |
-| G-2 | Rider home in time for attendant evening visit | Janelle 00:37:23 | Motivation only. Sub-goals G-6 and G-8 are deferred |
+| G-2 | Rider home in time for attendant evening visit | Janelle 00:37:23 | **(V2)** Partly in scope through G-150. G-6 and G-8 remain deferred |
 | G-3 | Reduce avoidable phone calls, call-center transactions and rider hold time | Janelle 00:32:20, Frank 00:50:52, Diane 00:59:57 | FR-002, FR-003, FR-011 |
 | G-38 / G-41 | Improve stability of daily runs / Same-day change applied without cascading delay | Frank 00:47:38, 00:48:57 | FR-010–FR-019 |
 | **Rider** | | | |
@@ -34,6 +41,9 @@ The goals inside the sprint boundary ([docs/goal-model.md §1.3](../../docs/goal
 | G-19 | Outcome or pending status shown within 1 minute of submission | Inferred | FR-006 |
 | G-79 | Rider sees effect of change before submitting | Frank 00:50:52 | FR-004 |
 | G-130 | Rider shown only own new window and approval need | Inferred (C-2) | FR-004, FR-008 |
+| G-150 **(V2)** | Rider shown own estimated arrival time before and after a change | Inferred from Janelle 00:36:47, 00:37:58 (O-2) | FR-025 |
+| G-151 **(V2)** | Rider offered nearest pickup times that would be confirmed immediately if requested change cannot be | Inferred (O-1, O-4; refines C-2) | FR-026 |
+| G-152 **(V2)** | Rider told the van cannot reach the requested window if own window unreachable | Inferred (O-3) | FR-027 |
 | G-129 | Avoid: other riders' trip or mobility details disclosed to riders | Inferred (C-2) | FR-008 |
 | G-36 / G-37 | Rider portal conforms to WCAG 2.1 AA / Rider completes trip tasks without staff help | Janelle 00:36:15 (WCAG reading inferred) | FR-009 |
 | **Deciding a change** | | | |
@@ -45,6 +55,7 @@ The goals inside the sprint boundary ([docs/goal-model.md §1.3](../../docs/goal
 | G-72 | Whole route impact shown if same-day change affects another rider window or capacity | Frank 00:49:55 | FR-017, FR-018. Partial: G-132 is deferred |
 | G-75 | Every affected rider and window shown | Frank 00:47:38 | FR-010, FR-017 |
 | G-76 | Capacity, mobility needs and pickup windows visible together on one board | Frank 00:49:55 | FR-017 |
+| G-153 **(V2)** | Affected riders and reasons summarized above the route impact | Inferred from Frank 00:47:38 (O-9) | FR-028 |
 | G-74 | Change applied if dispatcher accepts after seeing impact | Frank 00:47:38 | FR-018 |
 | G-146 | Change declined with reason if dispatcher rejects after seeing impact | Inferred (DP-2) | FR-019 |
 | G-77 | Change history records who changed what and when | Frank 00:47:38, 00:49:55 | FR-020, FR-021 |
@@ -57,6 +68,14 @@ The goals inside the sprint boundary ([docs/goal-model.md §1.3](../../docs/goal
 | G-53 | Trip removed and capacity released if trip cancelled | Inferred | FR-014 |
 
 ## Clarifications
+
+### Session 2026-11-18 (V2)
+
+Answered by the developer, from the V1 evaluation.
+
+- Q: How are the suggested pickup times (FR-026) chosen? → A: Candidate times in 5-minute steps, up to 90 minutes before and after the requested time, later than the current time and inside the service day. Each candidate is checked with the same impact calculation (FR-015) and kept only if it would be confirmed immediately. At most 3 are offered, nearest to the requested time first. (A-19)
+- Q: What is the rider's "estimated arrival time" (FR-025)? → A: The estimated time of her drop-off stop, from the same impact calculation used for the preview. For a trip with no pending change, it is the drop-off estimate on the current run.
+- Q: When are suggestions shown? → A: In the preview when the change needs approval, when the rider's own window is unreachable, and on the trip after a dispatcher declines. They are not shown when the change would be confirmed immediately.
 
 ### Session 2026-11-18
 
@@ -84,6 +103,8 @@ Janelle's workday ends early. She opens her trips for today, picks her return tr
 3. **Given** a requested change pushes no other pickup outside its window and exceeds no vehicle capacity, **When** the rider submits it, **Then** the change is confirmed immediately, the rider sees a confirmation with the new pickup window, and the trip shows the new window.
 4. **Given** a rider has submitted any change, **When** the outcome is shown, **Then** it appears within one minute of submission and is one of: confirmed, not accepted (with a reason), or pending.
 5. **Given** a trip has already been picked up or completed, **When** the rider views it, **Then** it cannot be changed or cancelled.
+6. **(V2)** **Given** the rider is reviewing a change, **When** the preview is shown, **Then** it includes her own estimated arrival time at her drop-off, and the confirmation and her trip list show the arrival time for the trip as it now stands.
+7. **(V2)** **Given** a requested change needs dispatcher approval, **When** the preview is shown, **Then** the rider is offered up to 3 nearby pickup times that would be confirmed immediately, and choosing one shows its preview.
 
 ---
 
@@ -102,6 +123,9 @@ Janelle requests a pickup time that would push another rider's pickup outside th
 3. **Given** a pending change, **When** the dispatcher opens it, **Then** they see, on one screen, every stop on the run whose time changes with its old and new estimated time and pickup window, which pickups would fall outside their windows, the onboard wheelchair and seat counts against the van's capacity along the run, and each rider's mobility needs.
 4. **Given** the dispatcher has the impact on screen, **When** they accept the change, **Then** it is applied, the rider sees a confirmation, and the driver's manifest is updated.
 5. **Given** the dispatcher has the impact on screen, **When** they decline the change, **Then** they must enter a reason, the original trip stands, the driver's manifest is unchanged, and the rider sees "not accepted" with that reason.
+6. **(V2)** **Given** a change was declined, **When** the rider views the trip, **Then** she sees the dispatcher's reason and up to 3 pickup times that would be confirmed immediately now.
+7. **(V2)** **Given** the van cannot reach the rider within the window she requested, **When** she reviews the change, **Then** she is told plainly that the van cannot reach her in that window and when it could, rather than shown an estimate that contradicts her window.
+8. **(V2)** **Given** a pending change, **When** the dispatcher opens it, **Then** a summary above the impact table names each rider who would be affected and why (pushed outside their window, or over capacity at their stop).
 
 ---
 
@@ -160,6 +184,7 @@ When a rider calls back unhappy, Frank opens the change history and sees exactly
 - **Cancelling a trip that has a pending change**: allowed. The pending change is withdrawn and recorded as withdrawn, and the cancellation is confirmed (A-12).
 - **Change that moves a pickup later so a downstream pickup becomes late, but still inside its window**: not counted as affecting that rider under the window-based reading (A-3). It is confirmed automatically. This is deliberate in V1 and is open question Q-3.
 - **The run changes while a change is pending**, for example because another change on the same run was accepted: the dispatcher sees the impact recalculated against the current run, and acceptance uses the current impact. The pending change is not re-decided automatically, even if it would now affect no one (A-16).
+- **(V2) No time nearby would be confirmed immediately**: the rider is told that no nearby time can be confirmed right away, and that she can still submit her request for the dispatcher.
 - **Many same-day changes on one run**: no limit or warning in V1. C-7 is unresolved (Q-4).
 - **Rider with a personal care attendant**: the attendant occupies a seat for capacity purposes and is shown on the driver's manifest as riding at no charge. The manifest note is existing seeded data (G-35, deferred); the seat counts toward capacity (A-13).
 
@@ -177,9 +202,9 @@ Each requirement lists the goals it satisfies and its evidence.
   *Goals: G-12 · Evidence: "I needed to change my pickup that same day" (Janelle 00:32:01) · A-5, A-6*
 - **FR-003**: The rider MUST be able to cancel any same-day trip that has not been picked up, after a confirmation step.
   *Goals: G-13 · Evidence: "update or cancel the ride online" (Janelle 00:32:01)*
-- **FR-004**: Before submitting a change, the system MUST show the rider their own new estimated pickup window and whether the change will be confirmed immediately or needs dispatcher approval.
+- **FR-004**: Before submitting a change, the system MUST show the rider their own new estimated pickup window and whether the change will be confirmed immediately or needs dispatcher approval. **(V2)** The preview MUST also include the items in FR-025, FR-026 and FR-027 where they apply.
   *Goals: G-79, G-130 · Evidence: "The rider should see what they're changing" (Frank 00:50:52) · C-2 (Inferred limit)*
-- **FR-005**: After a change is submitted, the system MUST show the rider one of three outcomes: confirmed (with the new window), not accepted (with a reason), or pending dispatcher review.
+- **FR-005**: After a change is submitted, the system MUST show the rider one of three outcomes: confirmed (with the new window), not accepted (with a reason), or pending dispatcher review. **(V2)** A not-accepted outcome MUST also offer suggested times (FR-026).
   *Goals: G-14, G-17, G-18, G-128 · Evidence: "see whether the change is accepted, and get an immediate confirmation instead of guessing what happened" (Janelle 00:32:01) · G-18 and G-128 Inferred*
 - **FR-006**: The outcome or pending status MUST be shown within one minute of submission.
   *Goals: G-19 · Inferred reading of "immediate" (A-2)*
@@ -232,6 +257,17 @@ Each requirement lists the goals it satisfies and its evidence.
 - **FR-024**: Each changed stop on the manifest MUST be marked with the time of the change. A cancelled stop MUST be shown as removed, with the time of cancellation.
   *Goals: G-149, G-148 · Evidence: "Drivers get frustrated when the lift schedule and passenger notes change mid-run" (Frank 00:48:57) · G-149 Inferred, resolves C-8*
 
+**(V2) Requirements added after evaluating V1**
+
+- **FR-025**: The system MUST show the rider her own estimated arrival time at her drop-off: in the change preview, in the confirmation, and on each scheduled trip in her list. It MUST come from the same impact calculation as the rest of the preview (FR-015), and it contains only her own trip's data (FR-008).
+  *Goals: G-150, G-2 · Evidence: "make it home in time for my attendant's evening visit" (Janelle 00:37:58); "plan my workday and my trip home with less uncertainty" (Janelle 00:36:47) · O-2*
+- **FR-026**: When a requested time change would need dispatcher approval, or has been declined, the system MUST offer the rider up to 3 pickup times that would be confirmed immediately, nearest to her requested time first (A-19). Each suggestion MUST be checked with the impact calculation (FR-015) and MUST NOT reveal anything about other riders (FR-008). Choosing a suggestion shows its preview. If none is found, the rider is told so.
+  *Goals: G-151, G-14, G-79 · Inferred, refines C-2 · O-1, O-4*
+- **FR-027**: When the van cannot reach the rider within the window she requested (FR-013), the preview MUST say so in plain words, with the earliest time the van could reach her, instead of only showing the estimate.
+  *Goals: G-152, G-79 · Inferred · O-3*
+- **FR-028**: For a pending change, the dispatcher's view MUST show, above the impact table, a summary naming each rider who would be affected and why (pickup pushed outside window with the new time, or vehicle over capacity at their stop).
+  *Goals: G-153, G-75 · Evidence: "show me every rider and window that gets hit before I accept the change" (Frank 00:47:38) · O-9*
+
 ### Prototype Requirements
 
 These support demonstrating and evaluating the prototype. They do not come from stakeholders.
@@ -263,10 +299,11 @@ How the overlaps, dependencies and conflicts from [docs/goal-model.md §2](../..
 | DP-2 | G-18 needs a reason from the dispatcher | New goal G-146 | FR-019 makes the reason mandatory. |
 | DP-3 | G-17 and G-64 are triggered by the same acceptance | Single event | FR-022 |
 | DP-4 | G-67 and the pending state | G-67 rewritten | FR-023 |
-| C-1 | Immediate outcome (G-14, Janelle) vs dispatcher control (G-73, Frank) | **Compromise, unvalidated** | FR-011, FR-012: decide by route impact. "Affected" means pushed outside the window or capacity exceeded (A-3). Q-1, Q-2, Q-3 remain open. |
-| C-2 | Rider sees effect (G-79) vs others' privacy (G-129) | **Privacy prioritized** | FR-004 shows only the rider's own window and the approval need. FR-008 |
+| C-1 | Immediate outcome (G-14, Janelle) vs dispatcher control (G-73, Frank) | **Compromise, unvalidated** | FR-011, FR-012: decide by route impact. "Affected" means pushed outside the window or capacity exceeded (A-3). Q-1, Q-2, Q-3 remain open. **(V2)** The V1 evaluation made both concrete (O-7, O-8); still open. |
+| C-2 | Rider sees effect (G-79) vs others' privacy (G-129) | **Privacy prioritized; refined in V2** | FR-004 shows only the rider's own window and the approval need. FR-008. **(V2)** FR-025–FR-027 give the rider more using her own trip only: her arrival time, times that would work, and why her window can't be met. Privacy is unchanged |
 | C-7 | Easier self-service (G-9) vs stable runs (G-41) | **Unresolved** | No limit or warning on the number of changes. Recorded as Q-4 for agency clarification. |
-| C-8 | Pushing changes to the driver (G-64) vs driver disruption (G-148) | **Compromise** | FR-024 marks changed and removed stops with times. Driver acknowledgement (G-66) is deferred. |
+| C-8 | Pushing changes to the driver (G-64) vs driver disruption (G-148) | **Compromise** | FR-024 marks changed and removed stops with times. Driver acknowledgement (G-66) is deferred. **(V2)** The V1 evaluation found "changed stop" ambiguous (O-5): only the requester's stops are marked. Left unchanged pending Q-6 |
+| O-6 **(V2)** | Accepting a change can make another rider late without notice (obstacle to G-41) | **Unresolved** | Not changed in V2. Notifying riders (G-27) is deferred, and how riders are told today is unknown (Q-7) |
 | C-4 | Dispatcher fixes vs overtime (G-55 × G-116) | Outside scope | G-132 (cost effect in the impact view) is deferred, so G-72 is partially satisfied. |
 
 ### Open Questions for Stakeholder Clarification
@@ -280,6 +317,8 @@ These are not blocking. V1 implements the stated default so the question can be 
 | Q-3 | Frank | Should a change that leaves another pickup inside its window, but later, still come to the dispatcher? | No, the window-based reading (A-3) |
 | Q-4 | Agency | Should same-day changes per rider or per run be limited or flagged? | No limit (C-7) |
 | Q-5 | Agency | Is there a late-cancel policy riders should be told about? | None shown. The cancellation time is recorded (FR-020). |
+| Q-6 **(V2)** | Frank | Should the manifest mark other riders' stops that a change moved, and above what shift? Should late pickups be flagged? (O-5) | Only the requester's stops are marked (V1 behaviour) |
+| Q-7 **(V2)** | Frank | When an accepted change makes another rider late, how is that rider told today, and who should tell them? (O-6) | Nobody is told. The dispatcher sees the late rider in the impact view and the summary (FR-028) |
 
 ## Success Criteria *(mandatory)*
 
@@ -293,6 +332,8 @@ These are not blocking. V1 implements the stated default so the question can be 
 - **SC-006**: In 100% of scenarios, the driver's manifest matches the set of accepted changes. No pending or declined change appears on it.
 - **SC-007**: 100% of submissions and decisions appear in the change history, with an actor and a time.
 - **SC-008**: Every rider task can be completed using the keyboard alone.
+- **SC-009 (V2)**: In 100% of previews and confirmations, the rider sees her own estimated arrival time before she submits and after it is confirmed.
+- **SC-010 (V2)**: 100% of suggested pickup times, when chosen and submitted without other changes in between, are confirmed immediately.
 
 ## Dependencies
 
@@ -347,6 +388,7 @@ From [docs/goal-model.md §2.3](../../docs/goal-model.md#23-dependencies).
 - **A-14**: The pickup window is 30 minutes long, starting at the scheduled pickup time, so a requested pickup time T gives a window of T to T+30. This follows common paratransit practice; no stakeholder specified a length.
 - **A-15**: Stops on a run stay in order of scheduled time. A changed pickup moves to the position for its new time, and its drop-off follows it (Clarifications).
 - **A-16**: A pending change's impact is recalculated against the current run whenever the dispatcher views or accepts it. It is never re-decided automatically (Clarifications).
-- **A-17**: The prototype's current time is a simulated clock starting at 14:30 on the service day (Clarifications).
+- **A-17 (revised in V2)**: The prototype's current time is fixed at 14:30 on the service day for the whole session. In V1 the clock advanced in real time while trips stayed still, which made a demo left open look inconsistent (O-10).
 - **A-18**: Boarding time is fixed per mobility need and seeded with the data, standing in for deferred goal G-133 (Clarifications).
-- **Out of scope** (deferred in docs/goal-model.md §1.4): booking, live vehicle tracking and arrival estimates, notifying other affected riders (G-27), driver acknowledgement (G-66), cost and overtime effects in the impact view (G-132), run building and conflict flags, vehicle matching, reporting, no-show patterns, and attendant-visit timing (G-6, G-8).
+- **A-19 (V2, Inferred)**: Suggested times are searched in 5-minute steps, up to 90 minutes before and after the requested time, later than now and inside the service day. At most 3 are offered, nearest first.
+- **Out of scope** (deferred in docs/goal-model.md §1.4): booking, live vehicle tracking and arrival estimates, notifying other affected riders (G-27), driver acknowledgement (G-66), cost and overtime effects in the impact view (G-132), run building and conflict flags, vehicle matching, reporting, no-show patterns, and booking or delivering against the attendant visit (G-6, G-8). **(V2)** G-2 is now partly in scope through G-150.
