@@ -1,4 +1,4 @@
-# Quickstart: Same-Day Trip Changes and Cancellations (V1)
+# Quickstart: Same-Day Trip Changes and Cancellations (V2)
 
 How to run the prototype and check each acceptance scenario by hand. The seeded scenarios
 (S1 to S4) are defined in [data-model.md](data-model.md#seed-design-pr-003).
@@ -39,3 +39,18 @@ each scenario below.
 | V12 | Dispatcher: History | Every event from the scenarios above, with actor, role, time, from and to, and reason. Automatic decisions show "system" | US5 |
 | V13 | Rider view, keyboard only | Every step of V2, V3, V5 and V11 can be done with Tab, Shift+Tab, Enter and Space, with visible focus | FR-009, SC-008 |
 | V14 | Rider: enter the current pickup time again, a time before 14:30, or submit a second change while one is pending | Rejected at entry with an explanation, or told a change is already pending | Edge cases, A-11, A-12 |
+
+## V2 validation scenarios
+
+These were added for the V2 requirements (spec.md Revision History). V1–V14 above still apply. In V2 the simulated time stays at 14:30 (A-17 revised).
+
+| # | Steps | Expected | Spec |
+|---|---|---|---|
+| V15 | Rider: change return trip to 16:30, review | The preview also shows "Estimated arrival home" (her drop-off time). After submitting, the confirmation and trip card show the arrival time | FR-025, SC-009 |
+| V16 | Rider: change to 15:45, review | Needs approval. Up to 3 "Times that can be confirmed right away" are offered, nearest first, with no other rider's information | FR-026, FR-008 |
+| V17 | Choose a suggested time, then submit | The preview loads for that time and says it can be confirmed right away. Submitting confirms it | FR-026, SC-010 |
+| V18 | Rider: change to 15:30, review | A plain message says the van cannot reach her between 15:30 and 16:00, and gives the earliest time it could. Suggestions are offered | FR-027 |
+| V19 | Request 15:15, submit. Dispatcher declines with a reason. Return to the rider | The trip shows the reason and up to 3 times that can be confirmed now | FR-026, FR-005 |
+| V20 | Dispatcher: open a pending 15:45 change | A summary above the table names Grace: pushed outside her window (new time vs window end) | FR-028 |
+| V21 | Leave the page open, reload later | The time still shows 14:30 and scenarios behave the same | A-17 (revised) |
+| V22 | Open /v1/ and /v2/ in the same browser and make different changes | Neither version's state appears in the other | O-11 |

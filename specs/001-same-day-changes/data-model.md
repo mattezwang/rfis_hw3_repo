@@ -77,6 +77,9 @@ Travel time between two locations is looked up in a seeded table (research.md R-
 - a new time must differ from the current one, be later than now, and be inside the service day (A-11)
 - at most one `pending` request per trip (A-12)
 
+### RiderTripView (V2 additions)
+`estimatedArrival` for scheduled trips (FR-025), and `suggestions` (SuggestedTime[]) when the latest request was declined (FR-026).
+
 ### RouteImpact (calculated, never stored as the source of truth)
 | Field | Type | Notes |
 |---|---|---|
@@ -105,6 +108,22 @@ Travel time between two locations is looked up in a seeded table (research.md R-
 | newWindowStart, newWindowEnd | Own new window |
 | estimatedPickup | Own estimated pickup time after the change |
 | needsApproval | boolean |
+| estimatedArrival | **(V2)** Own estimated drop-off time after the change (FR-025) |
+| ownWindowUnreachable | **(V2)** true when the van cannot reach her within the new window (FR-027) |
+
+### SuggestedTime (V2; FR-026, A-19)
+| Field | Notes |
+|---|---|
+| windowStart | A pickup window start that would be confirmed immediately |
+| estimatedPickup, estimatedArrival | The rider's own estimates for that time |
+
+The list holds at most 3, nearest to the requested time first. It contains times only, never other riders' data.
+
+### AffectedSummaryItem (V2, dispatcher only; FR-028)
+| Field | Notes |
+|---|---|
+| tripId, riderName | The affected rider |
+| reason | `pushed-outside-window` (with the new time and window end) or `over-capacity` (at their stop) |
 
 It has **no** fields about other riders, so the rider view cannot display them (Principle VI).
 

@@ -18,6 +18,15 @@ driver) over one in-browser state store, seeded with one mock service day. All i
 decision logic lives in a pure TypeScript module (`frontend/src/domain/`) with unit and scenario
 tests. The views only display its results (constitution, Principle V).
 
+### V2 revision
+
+V2 (from [docs/evaluation-v1.md](../../docs/evaluation-v1.md)) adds four requirements without changing the architecture:
+- FR-025 (rider's arrival time) and FR-027 (unreachable window) are new fields on the rider projection, taken from the same `computeImpact` result.
+- FR-026 (suggested times) is a new pure function, `suggestTimes`, which runs `computeImpact` over candidate times (A-19) and keeps those that would confirm.
+- FR-028 (affected-rider summary) is a new pure function, `affectedSummary`, over `RouteImpact`.
+
+Two implementation changes come with them: time is fixed at 14:30 (A-17 revised), and V2 uses its own browser storage key, because `/v1/` and `/v2/` share an origin on GitHub Pages (O-11).
+
 ## Technical Context
 
 **Language/Version**: TypeScript (strict mode)
@@ -40,7 +49,7 @@ width.
 **Performance Goals**: Impact calculation and decision complete within 100 ms for a run of up
 to 30 stops, far inside the one-minute requirement (FR-006, SC-002).
 
-**Constraints**: No network calls at runtime. The build must use a relative base path (`./`) so
+**Constraints**: V2's browser storage key must differ from V1's (O-11). No network calls at runtime. The build must use a relative base path (`./`) so
 it can be served from any static host or subpath. Time comes from an injectable simulated clock
 (A-17).
 
@@ -58,7 +67,8 @@ completed morning run and 2 afternoon runs, 10–20 stops per run, three views.
 | III. Preserve Conflicts and Decisions | The code implements documented decisions only. Unresolved C-7 is not resolved in code. | Pass | Pass: there is no change limit in the design, and the window-based test (A-3) is the only "affected" rule. |
 | IV. Specification Before Implementation | Behaviour flows spec → plan → tasks → code. | Pass | Pass: requirements issues found during the build are logged in `docs/v1-build-notes.md`, not silently fixed. |
 | V. Testable Decision Logic | Pure decision module, unit tests per decision scenario, one calculation for all views, injectable clock | Pass | Pass: the `computeImpact` and `decideChange` contracts (contracts/decision-module.md) are used by all three views. |
-| VI. Accessible and Private by Default | WCAG basics on rider screens; no other-rider data in the rider view | Pass | Pass: the rider view receives a `RiderPreview` projection that has no fields about other riders (data-model.md). |
+| VI. Accessible and Private by Default | WCAG basics on rider screens; no other-rider data in the rider view | Pass | Pass: the rider view receives a `RiderPreview` projection that has no fields about other riders (data-model.md). V2: suggestions are times only, and the arrival time is the rider's own. |
+| V2 re-check | All principles, for FR-025 to FR-028 | Pass | Pass: the new logic is pure and in `domain/` with tests (V). Suggestions and the summary reuse `computeImpact` (FR-015). Spec revised before code (IV). O-5 to O-8 are not resolved in code (III). |
 
 No violations, so Complexity Tracking is empty.
 
@@ -99,7 +109,8 @@ frontend/
     │   ├── decide.ts            # decideChange: FR-011, FR-012, FR-013, FR-014
     │   ├── store.ts             # State transitions and change history: FR-005, FR-007, FR-014,
     │   │                        #   FR-019, FR-020, FR-022, FR-023, FR-024, A-12
-    │   ├── projections.ts       # RiderPreview, ManifestView: FR-004, FR-008, FR-024
+    │   ├── projections.ts       # RiderPreview, ManifestView: FR-004, FR-008, FR-024, FR-025, FR-027
+    │   ├── suggest.ts           # V2: suggestTimes (FR-026, A-19), affectedSummary (FR-028)
     │   └── seed.ts              # Mock service day: A-1, A-18, PR-003
     ├── state/
     │   └── AppState.tsx         # React context and reducer over store.ts, localStorage

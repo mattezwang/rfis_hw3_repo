@@ -43,8 +43,16 @@ told only that approval is needed (FR-008).
 
 ## `toRiderPreview(impact) → RiderPreview`
 
-Implements FR-004 and FR-008. Returns the rider's own new window, estimated pickup and
-`needsApproval`. It never copies other riders' rows.
+Implements FR-004 and FR-008, and in V2 also FR-025 and FR-027. Returns the rider's own new window, estimated pickup and
+`needsApproval`, plus `estimatedArrival` and `ownWindowUnreachable` in V2. It never copies other riders' rows.
+
+## `suggestTimes(world, tripId, requestedStart, now) → SuggestedTime[]` (V2)
+
+Implements FR-026 and A-19. Pure. Candidates are `requestedStart ± 5k` minutes for k = 1..18, ordered by distance (later first on ties). Each candidate must pass `validateTimeChange`, and `computeImpact` must return `decision = confirm` with `requesterOutsideWindow = false`. Returns at most 3.
+
+## `affectedSummary(impact) → AffectedSummaryItem[]` (V2)
+
+Implements FR-028. Pure. One item per other rider whose pickup is in `othersOutsideWindow`, plus one item per other rider whose pickup or drop-off row is over capacity.
 
 ## Store transitions (`store.ts`)
 
