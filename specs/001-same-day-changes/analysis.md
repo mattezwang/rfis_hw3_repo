@@ -94,3 +94,20 @@ All HIGH and MEDIUM findings were fixed before `/speckit-implement`:
 - F3: `requestKind` added to RouteImpact
 - F4: plan scale corrected
 - C1: no change. SC-001 is evaluated in Step 4
+
+---
+
+# V2 Analysis (/speckit-analyze, 2026-11-18)
+
+Run after the V2 revisions to spec.md, plan.md, data-model.md, the contract and tasks.md (Phase 9).
+
+| ID | Category | Severity | Location | Summary | Resolution |
+|---|---|---|---|---|---|
+| V2-E1 | Coverage | — | FR-025–FR-028 | Every new requirement has at least one implementing task and one test task: FR-025 (T039, T041, T043), FR-026 (T038, T041–T043), FR-027 (T039, T041, T043), FR-028 (T040, T042, T044) | OK |
+| V2-E2 | Coverage | — | SC-009, SC-010 | SC-010 is tested in T038 (each suggestion confirms when submitted). SC-009 is checked in the T046 walkthrough (V15) and in T039 | OK |
+| V2-D1 | Constitution (V) | — | contract `suggestTimes`, `affectedSummary` | Both are pure functions in `domain/` that reuse `computeImpact`, so no second impact calculation is introduced (FR-015) | OK |
+| V2-D2 | Constitution (III) | — | spec Requirements Decisions, Q-6, Q-7 | O-5 to O-8 are recorded as open, and no task resolves them | OK |
+| V2-F1 | Inconsistency | LOW | data-model.md RiderTripView | RiderTripView was not a data-model entity in V1, only a projection in code. V2 introduces it in the data model without a full field table | Accepted. Its V1 fields are documented in code. V2 fields are listed |
+| V2-C1 | Underspecification | LOW | FR-027 "earliest time the van could reach her" | Defined as the requester's estimated pickup from the impact calculation (`requesterPickupAfter`) | Clarified in contract (`toRiderPreview`) |
+
+**Metrics (V2):** 28 FR + 3 PR. 47 tasks. 100% of requirements have at least one task. Critical: 0, High: 0. The two low findings are accepted. Ready for implementation.
