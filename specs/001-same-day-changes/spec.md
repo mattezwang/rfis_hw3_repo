@@ -12,6 +12,50 @@
 
 **Stakeholders**: Janelle (rider, uses a larger-than-standard wheelchair, travels five days a week), Frank (dispatcher, 19 years), Diane (paratransit budget manager).
 
+## Selected Stakeholder Goals
+
+The goals inside the sprint boundary ([docs/goal-model.md §1.3](../../docs/goal-model.md#13-selected-scope-same-day-change-and-cancellation-area-a), amended in §2.7), and the requirements in this spec that satisfy each one. "Inferred" means the goal is not stated in any interview (yellow in the goal model).
+
+| Goal | Goal text (sprint goal model) | Source | Requirements |
+|---|---|---|---|
+| **Parent goals (partially satisfied by this sprint)** | | | |
+| G-1 | Improve rider independence and certainty on daily trips | Janelle | All rider requirements |
+| G-2 | Rider home in time for attendant evening visit | Janelle 00:37:23 | Motivation only. Sub-goals G-6 and G-8 are deferred |
+| G-3 | Reduce avoidable phone calls, call-center transactions and rider hold time | Janelle 00:32:20, Frank 00:50:52, Diane 00:59:57 | FR-002, FR-003, FR-011 |
+| G-38 / G-41 | Improve stability of daily runs / Same-day change applied without cascading delay | Frank 00:47:38, 00:48:57 | FR-010–FR-019 |
+| **Rider** | | | |
+| G-9 | Rider manages own trips online and makes routine changes without calling (change and cancel part) | Janelle 00:38:44 | FR-001, FR-002, FR-003 |
+| G-12 | Rider changes pickup time online if plans change on day of trip | Janelle 00:32:01 | FR-002 |
+| G-13 | Rider cancels ride online if ride no longer needed | Janelle 00:32:01 | FR-003 |
+| G-14 | Rider sees outcome or pending status immediately if change submitted | Janelle 00:32:01 (rewritten, inferred) | FR-005 |
+| G-17 | Rider shown confirmation if change accepted | Janelle 00:32:01 | FR-005, FR-022 |
+| G-18 | Rider shown reason if change not accepted | Inferred | FR-005, FR-019 |
+| G-128 | Rider shown pending status if change awaits dispatcher | Inferred (C-1) | FR-005, FR-007 |
+| G-19 | Outcome or pending status shown within 1 minute of submission | Inferred | FR-006 |
+| G-79 | Rider sees effect of change before submitting | Frank 00:50:52 | FR-004 |
+| G-130 | Rider shown only own new window and approval need | Inferred (C-2) | FR-004, FR-008 |
+| G-129 | Avoid: other riders' trip or mobility details disclosed to riders | Inferred (C-2) | FR-008 |
+| G-36 / G-37 | Rider portal conforms to WCAG 2.1 AA / Rider completes trip tasks without staff help | Janelle 00:36:15 (WCAG reading inferred) | FR-009 |
+| **Deciding a change** | | | |
+| G-125 | Same-day change decided by route impact if rider submits change | Inferred (C-1) | FR-010, FR-013, FR-015 |
+| G-126 | Change accepted automatically if no other pickup pushed outside its window and no capacity exceeded | Inferred (C-1) | FR-011, FR-014 |
+| G-127 | Change routed to dispatcher if another pickup pushed outside its window or capacity exceeded | Inferred (C-1) | FR-012 |
+| **Dispatcher** | | | |
+| G-73 | Dispatcher controls same-day changes that affect other riders, capacity or shared routes | Frank 00:50:52 (rewritten, inferred) | FR-012, FR-016 |
+| G-72 | Whole route impact shown if same-day change affects another rider window or capacity | Frank 00:49:55 | FR-017, FR-018. Partial: G-132 is deferred |
+| G-75 | Every affected rider and window shown | Frank 00:47:38 | FR-010, FR-017 |
+| G-76 | Capacity, mobility needs and pickup windows visible together on one board | Frank 00:49:55 | FR-017 |
+| G-74 | Change applied if dispatcher accepts after seeing impact | Frank 00:47:38 | FR-018 |
+| G-146 | Change declined with reason if dispatcher rejects after seeing impact | Inferred (DP-2) | FR-019 |
+| G-77 | Change history records who changed what and when | Frank 00:47:38, 00:49:55 | FR-020, FR-021 |
+| **Driver and the run** | | | |
+| G-145 | Driver manifest matches accepted changes | Inferred | FR-022, FR-023 |
+| G-64 | Updated manifest and notes pushed to driver if change accepted | Frank 00:49:55, 00:50:52 | FR-022 |
+| G-67 | Avoid: driver manifest changed if change pending or declined | Inferred | FR-023 |
+| G-148 | Minimize driver disruption from mid-run manifest changes | Frank 00:48:57 | FR-024 |
+| G-149 | Changed stops marked on manifest with time of change | Inferred (C-8) | FR-024 |
+| G-53 | Trip removed and capacity released if trip cancelled | Inferred | FR-014 |
+
 ## Clarifications
 
 ### Session 2026-11-18
@@ -249,6 +293,41 @@ These are not blocking. V1 implements the stated default so the question can be 
 - **SC-006**: In 100% of scenarios, the driver's manifest matches the set of accepted changes. No pending or declined change appears on it.
 - **SC-007**: 100% of submissions and decisions appear in the change history, with an actor and a time.
 - **SC-008**: Every rider task can be completed using the keyboard alone.
+
+## Dependencies
+
+### On goals outside the sprint (replaced by mock data)
+
+| Depends on | Deferred goal | How V1 satisfies it |
+|---|---|---|
+| Trips already booked | G-11, G-15 (booking) | Seeded trips (A-1) |
+| Runs already built and free of conflicts | G-45, G-51 (run building) | Seeded runs R-3, R-12, R-14 (A-1) |
+| Vehicles matched to riders' mobility needs | G-28, G-32 (vehicle matching) | Seeded vehicle assignments (A-1) |
+| Manifests already issued to drivers | G-63 | Seeded manifests (A-1) |
+| Boarding time per rider | G-133 | Fixed per mobility need (A-18) |
+| Attendant note on the manifest | G-35 | Seeded attendant flag (A-13) |
+
+### Between requirements in this spec
+
+From [docs/goal-model.md §2.3](../../docs/goal-model.md#23-dependencies).
+
+| ID | Dependency | Where it is handled |
+|---|---|---|
+| DP-1 | Deciding by route impact needs runs, capacities, windows and travel times | A-1, A-15, FR-010 |
+| DP-2 | A reason for the rider (G-18) needs the dispatcher to supply one | FR-019 (G-146 added) |
+| DP-3 | The rider's confirmation and the driver's manifest come from the same acceptance | FR-022 |
+| DP-4 | The no-change-to-manifest rule (G-67) must cover the pending state | FR-023, A-7 |
+| DP-5 | The history has three writers: rider, system and dispatcher | FR-020 |
+| DP-6 | "Within one minute" holds only because "pending" is an allowed answer, and pending has no time limit | FR-006, FR-007, Q-2 |
+| DP-7 | The rider's preview and the dispatcher's impact view show the same calculation through different filters | FR-008, FR-015 |
+| DP-8 | Accessibility applies to every rider-facing requirement | FR-009 |
+| DP-9 | Cancellation times feed later late-cancel and no-show analysis (G-42, G-144, deferred) | FR-020, Q-5 |
+
+### Stakeholder goals this feature affects but does not deliver
+
+- **G-27** (notify other affected riders) and **G-26** (rider not left without information): when a dispatcher accepts a change that moves another rider, V1 does not notify that rider.
+- **G-66** (driver acknowledges the updated manifest): V1 shows the manifest but does not confirm the driver has seen it.
+- **G-132** (cost and overtime effect in the impact view): Diane's concern. It needs trip-level cost data (deferred).
 
 ## Assumptions
 
