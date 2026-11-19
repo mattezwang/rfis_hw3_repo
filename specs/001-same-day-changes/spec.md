@@ -12,6 +12,17 @@
 
 **Stakeholders**: Janelle (rider, uses a larger-than-standard wheelchair, travels five days a week), Frank (dispatcher, 19 years), Diane (paratransit budget manager).
 
+## Clarifications
+
+### Session 2026-11-18
+
+These were answered by the developer from the goal model and common paratransit practice. None of them changes a stakeholder decision; the stakeholder-level questions remain open as Q-1 to Q-5.
+
+- Q: When a rider changes a pickup time, where do their pickup and drop-off go in the van's run? → A: The run keeps its stops in order of scheduled time. The changed pickup moves to the position matching its new time, its drop-off follows it, and all other stops keep their order. Estimated times then follow from travel time between stops and boarding time, with the van waiting at a pickup if it arrives before the window opens. (A-15)
+- Q: If other changes are applied to a run while a change is pending, which impact does the dispatcher see? → A: The impact is recalculated against the run as it is when the dispatcher views the change, and again when they accept it. A pending change is never re-decided automatically. (A-16, FR-017)
+- Q: What is "the current time" in the prototype? → A: A simulated clock that starts at 14:30 on the seeded service day and advances in real time. Resetting the prototype resets the clock. (A-17)
+- Q: How long does boarding take when estimating stop times? → A: A fixed boarding time per mobility need, seeded with the data (shorter for ambulatory riders, longer for wheelchair users, longest for larger-than-standard chairs). Calculating boarding time from mobility needs is goal G-133, which is deferred, so it is mock data here. (A-18)
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Rider changes a same-day pickup time and gets an immediate answer (Priority: P1)
@@ -104,6 +115,7 @@ When a rider calls back unhappy, Frank opens the change history and sees exactly
 - **A second change submitted while one is pending for the same trip**: not allowed. The rider sees that the earlier change is still pending (A-12).
 - **Cancelling a trip that has a pending change**: allowed. The pending change is withdrawn and recorded as withdrawn, and the cancellation is confirmed (A-12).
 - **Change that moves a pickup later so a downstream pickup becomes late, but still inside its window**: not counted as affecting that rider under the window-based reading (A-3). It is confirmed automatically. This is deliberate in V1 and is open question Q-3.
+- **The run changes while a change is pending**, for example because another change on the same run was accepted: the dispatcher sees the impact recalculated against the current run, and acceptance uses the current impact. The pending change is not re-decided automatically, even if it would now affect no one (A-16).
 - **Many same-day changes on one run**: no limit or warning in V1. C-7 is unresolved (Q-4).
 - **Rider with a personal care attendant**: the attendant occupies a seat for capacity purposes and is shown on the driver's manifest as riding at no charge. The manifest note is existing seeded data (G-35, deferred); the seat counts toward capacity (A-13).
 
@@ -153,7 +165,7 @@ Each requirement lists the goals it satisfies and its evidence.
 
 - **FR-016**: The dispatcher MUST see a queue of all pending changes, ordered by the requested pickup time.
   *Goals: G-73, G-127 · Evidence: Frank 00:50:52*
-- **FR-017**: For a pending change, the dispatcher MUST see on one screen: every rider and stop on the run whose time changes, their old and new estimated times and pickup windows, which pickups fall outside their windows, the onboard wheelchair and seat counts against capacity along the run, and each rider's mobility needs.
+- **FR-017**: For a pending change, calculated against the run as it currently stands, the dispatcher MUST see on one screen: every rider and stop on the run whose time changes, their old and new estimated times and pickup windows, which pickups fall outside their windows, the onboard wheelchair and seat counts against capacity along the run, and each rider's mobility needs.
   *Goals: G-72, G-75, G-76 · Evidence: "show me every rider and window that gets hit before I accept the change" (Frank 00:47:38); "with capacity, mobility needs, and pickup windows all visible together" (Frank 00:49:55)*
 - **FR-018**: The dispatcher MUST be able to accept a pending change only from the screen showing its impact. Accepting applies the change.
   *Goals: G-74, G-72 · Evidence: "before I accept the change" (Frank 00:47:38)*
@@ -254,4 +266,8 @@ These are not blocking. V1 implements the stated default so the question can be 
 - **A-12** (**Inferred**): A trip can have at most one pending change. Cancelling withdraws a pending change.
 - **A-13** (**Inferred**): A personal care attendant occupies a seat for capacity purposes.
 - **A-14**: The pickup window is 30 minutes long, starting at the scheduled pickup time, so a requested pickup time T gives a window of T to T+30. This follows common paratransit practice; no stakeholder specified a length.
+- **A-15**: Stops on a run stay in order of scheduled time. A changed pickup moves to the position for its new time, and its drop-off follows it (Clarifications).
+- **A-16**: A pending change's impact is recalculated against the current run whenever the dispatcher views or accepts it. It is never re-decided automatically (Clarifications).
+- **A-17**: The prototype's current time is a simulated clock starting at 14:30 on the service day (Clarifications).
+- **A-18**: Boarding time is fixed per mobility need and seeded with the data, standing in for deferred goal G-133 (Clarifications).
 - **Out of scope** (deferred in docs/goal-model.md §1.4): booking, live vehicle tracking and arrival estimates, notifying other affected riders (G-27), driver acknowledgement (G-66), cost and overtime effects in the impact view (G-132), run building and conflict flags, vehicle matching, reporting, no-show patterns, and attendant-visit timing (G-6, G-8).

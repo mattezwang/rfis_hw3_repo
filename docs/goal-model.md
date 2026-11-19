@@ -229,6 +229,8 @@ Added while writing the spec (Step 3), when its edge cases needed an answer. All
 | A-13 | A personal care attendant occupies a seat for capacity purposes. | G-35, G-126 |
 | A-14 | The pickup window is 30 minutes long, starting at the scheduled pickup time. This follows common paratransit practice; no stakeholder gave a length. | G-126, G-127 |
 
+A-15 to A-18 are prototype modelling assumptions (stop ordering, recalculating a pending change, the simulated clock, seeded boarding times). They are recorded in the spec's Clarifications section ([specs/001-same-day-changes/spec.md](../specs/001-same-day-changes/spec.md)).
+
 ### 2.6 Open questions for stakeholder clarification
 
 | ID | For | Question | Why it matters |
