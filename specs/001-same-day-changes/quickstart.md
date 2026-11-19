@@ -31,9 +31,9 @@ each scenario below.
 | V4 | Driver: R-12 manifest after V3 | Janelle's stops are in their new position with new times, marked "Changed HH:MM" | US4-1 |
 | V5 | Rider: change return trip to 15:45 and submit | "Pending dispatcher review", and the original 17:00–17:30 still stands | US2-1, FR-007 |
 | V6 | Driver: R-12 manifest after V5 | Unchanged | US4-2 |
-| V7 | Dispatcher: open the pending change from V5 | Impact table: every stop whose time moves, before and after, the ambulatory rider flagged outside their window, onboard seats and wheelchairs against 6 / 2, mobility notes | US2-3 |
+| V7 | Dispatcher: open the pending change from V5 | Impact table: every stop whose time moves, before and after, Grace (ambulatory, with attendant) flagged outside her window, onboard seats and wheelchairs against 6 / 2, mobility notes | US2-3 |
 | V8 | Dispatcher: Accept | Rider sees "Confirmed". The manifest updates with marks. History shows submitted, routed, accepted | US2-4, US5 |
-| V9 | Reset. Rider: change to 15:15 and submit | Pending. Dispatcher sees capacity exceeded (3 wheelchairs, 2 positions) | US2-2 |
+| V9 | Reset. Rider: change to 15:15 and submit | Pending. Dispatcher sees capacity exceeded (3 wheelchairs, 2 positions), and Grace also pushed outside her window | US2-2 |
 | V10 | Dispatcher: Decline without a reason, then with "No wheelchair position free until 15:45" | Blocked without a reason. With a reason, the rider sees "Not accepted" with that reason, and the manifest is unchanged | US2-5 |
 | V11 | Reset. Rider: Cancel return trip, confirm | "Confirmed: cancelled". The manifest shows Janelle's stops as removed, with the time | US3, US4-3 |
 | V12 | Dispatcher: History | Every event from the scenarios above, with actor, role, time, from and to, and reason. Automatic decisions show "system" | US5 |

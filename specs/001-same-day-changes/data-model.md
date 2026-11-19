@@ -151,7 +151,7 @@ The seed contains one service day, simulated clock starting at 14:30 (A-17):
   Return trip Office Park → home, window **17:00–17:30**, on run **R-12**.
 - **Run R-12** (van V-07: 6 seats, 2 wheelchair positions, driver Dana Morales): pull-out 14:00,
   two stops already completed. Its afternoon riders include two wheelchair users whose trips
-  overlap between about 15:00 and 15:45, an ambulatory rider with an attendant around 16:00,
+  overlap between about 15:00 and 15:50, an ambulatory rider with an attendant (window 15:50),
   and riders after 17:00.
 - **Run R-14**: a second afternoon run, unaffected by Janelle's trips, so the driver view has
   more than one manifest.
@@ -162,6 +162,6 @@ scenario tests check them (tasks.md):
 | ID | Request | Expected decision | Why |
 |---|---|---|---|
 | S1 | New pickup 16:30 | confirm | No other pickup outside its window, capacity holds |
-| S2 | New pickup 15:45 | route to dispatcher | The ambulatory rider's pickup is pushed outside its window |
-| S3 | New pickup 15:15 | route to dispatcher | Three wheelchairs onboard with two positions |
+| S2 | New pickup 15:45 | route to dispatcher | Grace's pickup (ambulatory, with attendant) is pushed outside its window |
+| S3 | New pickup 15:15 | route to dispatcher | Three wheelchairs onboard with two positions (capacity exceeded). Grace's pickup is also pushed outside its window |
 | S4 | Cancel | confirm | A-4. Janelle's wheelchair position released |
