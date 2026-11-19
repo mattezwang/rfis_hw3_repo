@@ -219,6 +219,16 @@ C-3, C-5 and C-6 involve only deferred goals and are unchanged in the combined m
 | A-8 | One rider and one dispatcher persona are enough for the prototype. There is no login or authentication; roles are switched in the interface. | prototype |
 | A-9 | Riders who cannot use the portal still phone reservation staff (G-135, deferred). The sprint does not replace that channel. | G-135 |
 
+Added while writing the spec (Step 3), when its edge cases needed an answer. All are inferred:
+
+| ID | Assumption | Relates to |
+|---|---|---|
+| A-10 | If the assigned van cannot reach the requesting rider within their new window, the change goes to the dispatcher instead of being confirmed or rejected automatically. | G-125 |
+| A-11 | A new pickup time must be later than the current time and within the service day. | G-12 |
+| A-12 | A trip can have at most one pending change. Cancelling withdraws a pending change. | G-128, G-13 |
+| A-13 | A personal care attendant occupies a seat for capacity purposes. | G-35, G-126 |
+| A-14 | The pickup window is 30 minutes long, starting at the scheduled pickup time. This follows common paratransit practice; no stakeholder gave a length. | G-126, G-127 |
+
 ### 2.6 Open questions for stakeholder clarification
 
 | ID | For | Question | Why it matters |
