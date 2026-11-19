@@ -1,0 +1,269 @@
+[
+    {
+        "uc_name": "Book Round Trip Online",
+        "uc_id": "UC-1",
+        "actors": ["Rider", "TripPortal", "ReservationStaff", "Dispatcher"],
+        "pre_conditions": [
+            "[YELLOW] The rider is eligible for paratransit and, to book online, has a portal account"
+        ],
+        "flow_of_events": [
+            "[YELLOW] The rider signs in to the trip portal",
+            "[YELLOW] The rider selects saved home and work details",
+            "The rider requests the morning trip and the return trip in one request for the next day",
+            [
+                "The portal checks that the request arrived by 5 p.m. the day before",
+                "[YELLOW] If the request arrived after 5 p.m., then the portal holds it for dispatcher review and tells the rider it is held, not denied"
+            ],
+            [
+                "[YELLOW] The portal reads the rider's chair size and lift needs from the rider profile",
+                "[YELLOW] If the chair or lift details are missing, then the portal asks the rider to enter them before continuing"
+            ],
+            "[YELLOW] The portal places both trips in the trip queue for run building",
+            "[YELLOW] The portal shows the rider a confirmation that both trips were received, with each pickup window to follow once the runs are built"
+        ],
+        "post_conditions": [
+            "If the request arrived by 5 p.m., both trips are in the trip queue with the rider's mobility details attached",
+            "[YELLOW] If the request arrived after 5 p.m., both trips are held for dispatcher review"
+        ],
+        "alternative_flows": [
+            "If the rider does not book online, then reservation staff enter the same trips by phone and the flow continues from the 5 p.m. check"
+        ],
+        "non_functional": [
+            "[YELLOW] The portal conforms to WCAG 2.1 AA so the rider can book without staff help"
+        ]
+    },
+    {
+        "uc_name": "Change or Cancel Trip Same Day",
+        "uc_id": "UC-2",
+        "actors": ["Rider", "TripPortal", "ReservationStaff", "DispatchBoard", "Dispatcher", "Driver", "DriverApp", "NotificationService"],
+        "pre_conditions": [
+            "The rider has a booked trip for today that is assigned to a run",
+            "[YELLOW] The rider is signed in to the trip portal, unless the rider calls reservation staff"
+        ],
+        "flow_of_events": [
+            "The rider selects the trip and chooses a new pickup or a cancellation",
+            "The dispatch board calculates the effect on every rider and window on the run, with capacity and mobility needs",
+            "[YELLOW] The portal shows the rider what is being changed, limited to the rider's own new window and whether dispatcher approval is needed, never other riders' details",
+            "The rider submits the change and the system records who made it and when",
+            [
+                "[YELLOW] The dispatch board decides the change by its route impact",
+                "[YELLOW] If no other rider window or capacity is affected, then the board accepts the change automatically and the flow continues at the rider confirmation",
+                "[YELLOW] If another rider window or capacity is affected, then the board routes the change to the dispatcher and the portal shows the rider a pending status within 1 minute"
+            ],
+            [
+                "[YELLOW] The dispatcher reviews every affected rider and window, with the overtime and deadhead effect of the change, before accepting it",
+                "[YELLOW] If the dispatcher declines the change, then the original trip stands, the driver's manifest is not changed, the portal shows the rider the reason and the flow ends"
+            ],
+            "The portal shows the rider confirmation that the change was accepted",
+            "[YELLOW] If the trip was cancelled, then the board removes it from the run and releases the capacity",
+            "The dispatch board pushes the updated manifest and notes to the driver",
+            [
+                "[YELLOW] The driver acknowledges the updated manifest",
+                "[YELLOW] If the driver does not acknowledge within 2 minutes, then the board alerts the dispatcher"
+            ],
+            "The notification service sends each affected rider one timely update, with no duplicates"
+        ],
+        "post_conditions": [
+            "The run, the driver's manifest and the rider's trip agree",
+            "The change history records what changed, who changed it and when"
+        ],
+        "alternative_flows": [
+            "If the rider calls instead of using the portal, then reservation staff enter the change and the flow continues at the route impact calculation"
+        ],
+        "non_functional": [
+            "[YELLOW] The rider sees an outcome or pending status within 1 minute of submitting",
+            "[YELLOW] Riders see no trip or mobility details belonging to other riders"
+        ]
+    },
+    {
+        "uc_name": "Track Van Arrival",
+        "uc_id": "UC-3",
+        "actors": ["Rider", "TripPortal", "ETAService", "VehicleGPS", "NotificationService"],
+        "pre_conditions": [
+            "The rider has a trip today and the assigned van has started its run"
+        ],
+        "flow_of_events": [
+            "[YELLOW] The vehicle GPS reports the van's position to the system",
+            "The ETA service computes an arrival estimate from the van's position",
+            [
+                "The rider views the van's live location and arrival estimate in the portal",
+                "[YELLOW] If the rider prefers not to check the portal, then the notification service sends alerts as the van approaches"
+            ],
+            [
+                "[YELLOW] The ETA service compares the estimate with the pickup window",
+                "[YELLOW] If the van is predicted to arrive outside the window, then the notification service alerts the rider once with the new estimate"
+            ],
+            "The rider uses the vehicle status to decide when to go out to meet the van"
+        ],
+        "post_conditions": [
+            "The rider knows the van's actual status without calling dispatch"
+        ],
+        "non_functional": [
+            "[YELLOW] The arrival estimate is within 5 minutes of actual arrival"
+        ]
+    },
+    {
+        "uc_name": "Build Next-Day Runs",
+        "uc_id": "UC-4",
+        "actors": ["Dispatcher", "SchedulingModule", "DispatchBoard", "Driver", "DriverApp"],
+        "pre_conditions": [
+            "The 5 p.m. cutoff for next-day requests has passed"
+        ],
+        "flow_of_events": [
+            "The dispatcher reviews the trip queue",
+            "[YELLOW] The scheduling module matches each trip to mobility needs and vehicle capacity, treating vehicle fit as a hard constraint ahead of deadhead savings and adding boarding time to each pickup from the rider's mobility needs",
+            "The dispatcher assigns runs and drivers",
+            [
+                "The dispatch board checks every run for conflicts before it reaches the driver",
+                "If a vehicle is overloaded, riders are incompatible, timing between legs is bad or a mobility detail does not match the van, then the board flags the conflict"
+            ],
+            "[YELLOW] The dispatcher resolves each flagged conflict by moving a trip to another run, swapping vehicles or adjusting the shared route, and the board shows the overtime and deadhead effect of the fix",
+            "The driver receives the manifest, windows, mobility details and notes in the driver app"
+        ],
+        "post_conditions": [
+            "Every run for the next day is free of flagged conflicts and assigned to a driver and vehicle"
+        ],
+        "non_functional": [
+            "Capacity, mobility needs and pickup windows are visible together on one board"
+        ]
+    },
+    {
+        "uc_name": "Add Trip After Runs Are Built",
+        "uc_id": "UC-5",
+        "actors": ["ReservationStaff", "Dispatcher", "DispatchBoard", "Driver", "DriverApp"],
+        "pre_conditions": [
+            "Runs for the day have been built",
+            "A trip must be added, such as a power-chair trip"
+        ],
+        "flow_of_events": [
+            "Reservation staff enter the added trip",
+            "The dispatch board flags any capacity conflict on the shared run",
+            "The dispatcher reviews the effect on all downstream pickups",
+            [
+                "The dispatcher resequences the manifests and moves an affected rider if needed",
+                "If a vehicle swap is needed, then the dispatcher swaps vehicles on the run"
+            ],
+            "The dispatch board pushes the updated manifest and notes to each affected driver",
+            "The board records what was changed, who changed it and when"
+        ],
+        "post_conditions": [
+            "The added trip is on a run with no capacity conflict",
+            "The affected pickups stay within their windows"
+        ],
+        "non_functional": [
+            "Updated manifests reach drivers without the dispatcher phoning them"
+        ]
+    },
+    {
+        "uc_name": "Pick Up and Board Rider",
+        "uc_id": "UC-6",
+        "actors": ["Driver", "DriverApp", "Rider", "Attendant", "Dispatcher"],
+        "pre_conditions": [
+            "The driver has the current manifest with pickup location, mobility details and notes"
+        ],
+        "flow_of_events": [
+            "The driver arrives at the correct pickup location within the pickup window",
+            [
+                "[YELLOW] The driver confirms the vehicle can accommodate the rider's chair",
+                "[YELLOW] If the assigned vehicle cannot accommodate the chair, then the dispatcher swaps vehicles"
+            ],
+            "The driver gives the rider enough space and time to deploy the ramp and board without being rushed",
+            "If the rider's attendant is present, then the attendant boards at no charge under program rules",
+            "The driver takes the rider to the destination",
+            "The driver records road notes in the system instead of by radio",
+            "[YELLOW] The driver records the trip as completed in the driver app"
+        ],
+        "post_conditions": [
+            "The rider is delivered and the trip is recorded as completed",
+            "[YELLOW] On a return trip, the rider is home before the attendant's evening visit"
+        ],
+        "non_functional": [
+            "The rider boards safely without being rushed"
+        ]
+    },
+    {
+        "uc_name": "Monitor Runs During Shift",
+        "uc_id": "UC-7",
+        "actors": ["Dispatcher", "DispatchBoard", "Driver"],
+        "pre_conditions": [
+            "The dispatcher has started a shift and the day's runs are on the board"
+        ],
+        "flow_of_events": [
+            "The dispatcher checks the day's runs, vehicle assignments and driver notes",
+            "The board shows pickups and drop-offs as they move along",
+            "The board shows any driver held up on the previous leg",
+            "If there are late pull-outs, stacked exceptions, a driver falling behind or too many same-day changes, then the board shows an early warning",
+            "The dispatcher balances the routes",
+            "The dispatcher hands the board to the next dispatcher at shift end"
+        ],
+        "post_conditions": [
+            "The next dispatcher has an accurate board"
+        ],
+        "non_functional": [
+            "The board stays accurate throughout the shift"
+        ]
+    },
+    {
+        "uc_name": "Review No-Show and Late-Cancel Patterns",
+        "uc_id": "UC-8",
+        "actors": ["Dispatcher", "DispatchBoard", "ReportingModule"],
+        "pre_conditions": [
+            "[YELLOW] No-show and late-cancel events are recorded per rider"
+        ],
+        "flow_of_events": [
+            "The dispatcher opens the view of repeated no-shows and late cancels",
+            "The board shows patterns across riders and trips",
+            "[YELLOW] The dispatcher uses the patterns when planning runs to reduce capacity lost to no-shows"
+        ],
+        "post_conditions": [
+            "Repeat patterns are known to dispatch instead of being treated as one-off surprises"
+        ],
+        "non_functional": []
+    },
+    {
+        "uc_name": "Reconcile Contractor Invoice",
+        "uc_id": "UC-9",
+        "actors": ["BudgetManager", "ReportingModule", "Contractor"],
+        "pre_conditions": [
+            "A contractor invoice has been received",
+            "Dispatch records for the billing period are linked to completed trips"
+        ],
+        "flow_of_events": [
+            "The budget manager reviews the invoice against dispatch records",
+            "If billed hours differ from completed service, then the reporting module flags an invoice exception",
+            "The budget manager requires a correction from the contractor for each exception",
+            "[YELLOW] The contractor resubmits the corrected invoice"
+        ],
+        "post_conditions": [
+            "Invoiced hours match completed service"
+        ],
+        "non_functional": [
+            "[YELLOW] Trip cost data matches completed service"
+        ]
+    },
+    {
+        "uc_name": "Analyze Budget Variance",
+        "uc_id": "UC-10",
+        "actors": ["BudgetManager", "ReportingModule", "SchedulingStaff"],
+        "pre_conditions": [
+            "Reservations, dispatch events, completed trips, cancellations and no-shows are linked per trip"
+        ],
+        "flow_of_events": [
+            "The reporting module provides scheduled versus actual revenue hours, deadhead mileage, vehicle utilization and overtime attribution",
+            "The budget manager compares actual trip volumes against the adopted budget",
+            "[YELLOW] The reporting module reports on-time performance separately for return trips",
+            [
+                "The budget manager reviews cost per passenger trip, overtime and contractor invoice variance",
+                "If costs run above plan, then the budget manager revises the forecast, defers nonessential administrative spending and works with scheduling staff on earlier schedule review, without cutting eligible trips"
+            ],
+            "[YELLOW] The reporting module produces federal reports from the linked trip records",
+            "The budget manager weighs service changes against their effect on riders, vehicle utilization, overtime and federal obligations"
+        ],
+        "post_conditions": [
+            "The variance analysis is complete without manual reconciliation"
+        ],
+        "non_functional": [
+            "Cost-allocation data is reliable at the trip level"
+        ]
+    }
+]
