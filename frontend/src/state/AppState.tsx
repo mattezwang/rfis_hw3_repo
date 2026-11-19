@@ -1,11 +1,12 @@
 // Shared state for all three views, mirrored to localStorage, with reset.
-// Implements: PR-002 (reset to the seed), research.md R-4, A-17 (simulated clock), DP-3 (one
-// state, so one acceptance updates the rider and the driver together).
+// Implements: PR-002 (reset to the seed), research.md R-4, A-17 (revised in V2: simulated time
+// fixed at 14:30), DP-3 (one state, so one acceptance updates the rider and the driver together),
+// O-11 (V2 has its own storage key; /v1/ and /v2/ share an origin on GitHub Pages).
 // Views call the domain store; no decision logic lives here (constitution Principle V).
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import type { AppData, Minutes, Result } from '../domain/types';
 import { createSeed, DISPATCHER_NAME } from '../domain/seed';
-import { simulatedClock } from '../domain/clock';
+import { fixedClock, SIMULATION_START } from '../domain/clock';
 import {
   acceptChange,
   cancelTrip,
@@ -14,7 +15,8 @@ import {
   type TransitionResult,
 } from '../domain/store';
 
-const STORAGE_KEY = 'same-day-changes:v1';
+const STORAGE_KEY = 'same-day-changes:v2';
+const clock = fixedClock(SIMULATION_START);
 
 interface Persisted {
   data: AppData;
@@ -53,21 +55,14 @@ const Ctx = createContext<AppState | null>(null);
 
 export function AppStateProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<Persisted>(load);
-  const [, setTick] = useState(0);
 
   useEffect(() => save(state), [state]);
 
-  // Re-render periodically so the simulated clock display advances.
-  useEffect(() => {
-    const id = window.setInterval(() => setTick((t) => t + 1), 15000);
-    return () => window.clearInterval(id);
-  }, []);
-
-  const now = simulatedClock(state.originMs).now();
+  const now = clock.now();
 
   const run = useCallback(
     (fn: (data: AppData, at: Minutes) => Result<TransitionResult>): Result<TransitionResult> => {
-      const at = simulatedClock(state.originMs).now();
+      const at = clock.now();
       const result = fn(state.data, at);
       if (result.ok) setState((s) => ({ ...s, data: result.value.data }));
       return result;

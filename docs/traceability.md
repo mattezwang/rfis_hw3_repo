@@ -1,4 +1,4 @@
-# Requirements Traceability Matrix (Prototype V1)
+# Requirements Traceability Matrix (Prototypes V1 and V2)
 
 Step 4 of Assignment 3. It traces each requirement in the V1 specification to its interview
 evidence, its goal in the goal model, and the code that implements it, and records whether
@@ -98,3 +98,34 @@ happens, it points to a requirements issue rather than an implementation defect.
   logic is covered by 34 tests.
 - **Requirement → behaviour**: each requirement was exercised on the deployed V1
   (quickstart V1–V14 plus edge cases E1–E5 in the evaluation).
+
+---
+
+## V2 additions and changes
+
+V2 (tag `v2.0`) adds four requirements from the V1 evaluation and amends two. Verified with
+tests and quickstart V15–V22 ([evaluation-v2.md](evaluation-v2.md)). All V1 rows above still apply
+to V2 unless amended here.
+
+| Requirement | Interview evidence | Goal model reference | Code / implementation | Verified by | Status (V2) |
+|---|---|---|---|---|---|
+| **FR-004 (amended)** Preview also includes arrival, unreachable message and suggestions | Frank 00:50:52 "The rider should see what they're changing" | G-79, G-130 | `views/rider/ChangeForm.tsx` (review step) | V15, V16, V18 | Fully satisfied |
+| **FR-005 (amended)** Not-accepted outcome offers suggested times | Janelle 00:32:01 "see whether the change is accepted, and get an immediate confirmation instead of guessing what happened" | G-14, G-18 | `views/rider/TripList.tsx` › `StatusNote` with `SuggestionList` | V19 | Fully satisfied |
+| **FR-025** Rider's own estimated arrival in preview, confirmation and trip list | Janelle 00:37:58 "make it home in time for my attendant's evening visit"; Janelle 00:36:47 "plan my workday and my trip home with less uncertainty" | G-150, G-2 | `domain/projections.ts` › `toRiderPreview` (`estimatedArrival`), `estimatedArrivalFor`, `riderTrips`; `ChangeForm.tsx`; `TripList.tsx` | `decide.test.ts` (V2 preview fields); V15 | Fully satisfied |
+| **FR-026** Up to 3 pickup times that confirm immediately, nearest first; offered when approval is needed or after a decline | Inferred (O-1, O-4; refines C-2) | G-151, G-14, G-79 | `domain/suggest.ts` › `suggestTimes`; `ChangeForm.tsx` › `SuggestionList`; `projections.ts` › `riderTrips` (`suggestions`) | `suggest.test.ts` (every suggestion confirms: SC-010; times only: FR-008); V16, V17, V19 | Fully satisfied |
+| **FR-027** Plain message when the van cannot reach the requested window | Inferred (O-3) | G-152 | `projections.ts` › `toRiderPreview` (`ownWindowUnreachable`); `ChangeForm.tsx` | `decide.test.ts`; V18 | Fully satisfied |
+| **FR-028** Summary of affected riders and why, above the impact table | Frank 00:47:38 "show me every rider and window that gets hit before I accept the change" | G-153, G-75 | `domain/suggest.ts` › `affectedSummary`; `views/dispatcher/ImpactTable.tsx` › `AffectedSummary` | `suggest.test.ts`; V20 | Fully satisfied |
+| **A-17 (revised)** Simulated time fixed at 14:30 | n/a (prototype) | n/a | `state/AppState.tsx` (`fixedClock`) | V21 | Fully satisfied |
+| **FR-024** (unchanged) | Frank 00:48:57 | G-149, G-148 | unchanged | unchanged | Still partially satisfied. Left open pending Frank (Q-6) |
+
+### Goal satisfaction: V1 → V2
+
+| Goal | V1 | V2 |
+|---|---|---|
+| G-2 home before the attendant's visit | Not satisfied | Partially satisfied (G-150). G-6 and G-8 still deferred |
+| G-14 immediate outcome | Partial | Improved: a confirmable time is always offered when one exists |
+| G-79 see the effect before submitting | Partial | Satisfied |
+| G-72/G-75/G-76 route impact | Partial | Improved (G-153). G-132 still deferred |
+| G-129/G-130 privacy | Satisfied | Satisfied (suggestions are the rider's own times only) |
+| G-148/G-149 driver disruption | Partial | Unchanged (Q-6) |
+| G-26 rider not left without information | Harmed | Unchanged (Q-7) |

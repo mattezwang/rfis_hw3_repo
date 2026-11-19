@@ -180,19 +180,19 @@ Web app, front end only: `frontend/src/`, `frontend/tests/` (plan.md, Project St
 
 ### Tests for V2 ⚠️
 
-- [ ] T038 [P] Write tests in `frontend/tests/suggest.test.ts`: for S2 (15:45) `suggestTimes` returns 1–3 times nearest first, each confirmed when submitted (SC-010); a rider-unreachable request gets suggestions; no suggestion is earlier than now; no suggestion contains other riders' data (FR-026, A-19, FR-008)
-- [ ] T039 [P] Write tests in `frontend/tests/decide.test.ts`: `toRiderPreview` includes `estimatedArrival` equal to the requester's drop-off estimate and `ownWindowUnreachable` for the 15:30 case (data-model.md `RiderPreview.estimatedArrival`, `RiderPreview.ownWindowUnreachable`; FR-025, FR-027)
-- [ ] T040 [P] Write tests for `affectedSummary`: S2 names Grace as pushed outside her window; S3 includes an over-capacity item (FR-028)
+- [X] T038 [P] Write tests in `frontend/tests/suggest.test.ts`: for S2 (15:45) `suggestTimes` returns 1–3 times nearest first, each confirmed when submitted (SC-010); a rider-unreachable request gets suggestions; no suggestion is earlier than now; no suggestion contains other riders' data (FR-026, A-19, FR-008)
+- [X] T039 [P] Write tests in `frontend/tests/decide.test.ts`: `toRiderPreview` includes `estimatedArrival` equal to the requester's drop-off estimate and `ownWindowUnreachable` for the 15:30 case (data-model.md `RiderPreview.estimatedArrival`, `RiderPreview.ownWindowUnreachable`; FR-025, FR-027)
+- [X] T040 [P] Write tests for `affectedSummary`: S2 names Grace as pushed outside her window; S3 includes an over-capacity item (FR-028)
 
 ### Implementation for V2
 
-- [ ] T041 Extend `toRiderPreview` and `riderTrips` in `frontend/src/domain/projections.ts` with data-model.md `RiderPreview.estimatedArrival`, `RiderPreview.ownWindowUnreachable`, and RiderTripView `estimatedArrival` and `suggestions` (FR-025, FR-026, FR-027)
-- [ ] T042 Implement `suggestTimes` and `affectedSummary` in `frontend/src/domain/suggest.ts` per contracts/decision-module.md (FR-026, FR-028, A-19)
-- [ ] T043 Update the rider view: the preview shows arrival time, the unreachable-window message and suggested times as buttons that load their preview; the confirmation shows arrival; trip cards show arrival; a declined trip shows suggestions (`frontend/src/views/rider/ChangeForm.tsx`, `TripList.tsx`; FR-025–FR-027, FR-009)
-- [ ] T044 Add the affected-rider summary above the impact table in `frontend/src/views/dispatcher/ImpactTable.tsx` (FR-028)
-- [ ] T045 Fix simulated time at 14:30 (A-17 revised) and give V2 its own storage key (O-11) in `frontend/src/state/AppState.tsx`; update the header text in `frontend/src/App.tsx` and the title in `frontend/index.html` to V2
-- [ ] T046 Run `npm test` and `npm run build`. Walk through quickstart V1–V22 in a real browser. Record the results in `docs/evaluation-v2.md`
-- [ ] T047 Update `docs/traceability.md` with the V2 requirements and changed statuses, and `README.md` with the V2 links and what changed
+- [X] T041 Extend `toRiderPreview` and `riderTrips` in `frontend/src/domain/projections.ts` with data-model.md `RiderPreview.estimatedArrival`, `RiderPreview.ownWindowUnreachable`, and RiderTripView `estimatedArrival` and `suggestions` (FR-025, FR-026, FR-027)
+- [X] T042 Implement `suggestTimes` and `affectedSummary` in `frontend/src/domain/suggest.ts` per contracts/decision-module.md (FR-026, FR-028, A-19)
+- [X] T043 Update the rider view: the preview shows arrival time, the unreachable-window message and suggested times as buttons that load their preview; the confirmation shows arrival; trip cards show arrival; a declined trip shows suggestions (`frontend/src/views/rider/ChangeForm.tsx`, `TripList.tsx`; FR-025–FR-027, FR-009)
+- [X] T044 Add the affected-rider summary above the impact table in `frontend/src/views/dispatcher/ImpactTable.tsx` (FR-028)
+- [X] T045 Fix simulated time at 14:30 (A-17 revised) and give V2 its own storage key (O-11) in `frontend/src/state/AppState.tsx`; update the header text in `frontend/src/App.tsx` and the title in `frontend/index.html` to V2
+- [X] T046 Run `npm test` and `npm run build`. Walk through quickstart V1–V22 in a real browser. Record the results in `docs/evaluation-v2.md`
+- [X] T047 Update `docs/traceability.md` with the V2 requirements and changed statuses, and `README.md` with the V2 links and what changed
 
 ---
 

@@ -202,6 +202,26 @@ export interface RiderPreview {
   newWindowEnd: Minutes | null;
   estimatedPickup: Minutes | null;
   needsApproval: boolean;
+  /** V2: the rider's own estimated drop-off time (FR-025). */
+  estimatedArrival: Minutes | null;
+  /** V2: the van cannot reach the rider within the requested window (FR-027). */
+  ownWindowUnreachable: boolean;
+}
+
+/** V2: a pickup time that would be confirmed immediately (FR-026). Times only. */
+export interface SuggestedTime {
+  windowStart: Minutes;
+  estimatedPickup: Minutes | null;
+  estimatedArrival: Minutes | null;
+}
+
+/** V2: one affected rider, for the dispatcher's summary (FR-028). */
+export interface AffectedSummaryItem {
+  tripId: string;
+  riderName: string;
+  reason: 'pushed-outside-window' | 'over-capacity';
+  newTime: Minutes | null;
+  windowEnd: Minutes | null;
 }
 
 export type Result<T> = { ok: true; value: T } | { ok: false; error: string };

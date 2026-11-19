@@ -1,11 +1,32 @@
 // Whole-route impact of a pending change on one screen.
 // Implements: FR-017 (every affected rider and window, before and after, outside-window flags,
 // onboard capacity, mobility needs), FR-015 (renders RouteImpact from the domain module only),
-// G-72, G-75, G-76.
+// G-72, G-75, G-76. V2: FR-028 (summary of affected riders and why, from affectedSummary).
 import type { ChangeRequest, RouteImpact } from '../../domain/types';
 import { fmt, fmtWindow } from '../../domain/time';
 import { REASON_TEXT } from '../../domain/decide';
 import { useAppState } from '../../state/AppState';
+import { affectedSummary } from '../../domain/suggest';
+
+function AffectedSummary({ impact }: { impact: RouteImpact }) {
+  const items = affectedSummary(impact);
+  if (items.length === 0) return null;
+  return (
+    <div className="affected-summary">
+      <h4>Riders affected if you accept</h4>
+      <ul>
+        {items.map((i) => (
+          <li key={`${i.tripId}-${i.reason}`}>
+            <strong>{i.riderName}</strong>:{' '}
+            {i.reason === 'pushed-outside-window'
+              ? `pickup would be ${fmt(i.newTime)}, after their window ends at ${fmt(i.windowEnd)}`
+              : 'on board while the van would be over capacity'}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
 
 export function ImpactTable({ request, impact }: { request: ChangeRequest; impact: RouteImpact }) {
   const { data } = useAppState();
@@ -23,6 +44,7 @@ export function ImpactTable({ request, impact }: { request: ChangeRequest; impac
         Run {impact.runId}, {v.label} ({v.seats} seats, {v.wheelchairPositions} wheelchair positions). Impact
         recalculated against the run as it is now.
       </p>
+      <AffectedSummary impact={impact} />
       {impact.reasons.length > 0 ? (
         <ul className="reasons">
           {impact.reasons.map((r) => (

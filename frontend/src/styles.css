@@ -1,4 +1,5 @@
-/* Styles. Implements FR-009 basics: visible focus, text contrast >= 4.5:1, status conveyed by
+/* Styles. V2 adds suggestion and affected-summary blocks (FR-026, FR-028).
+   Implements FR-009 basics: visible focus, text contrast >= 4.5:1, status conveyed by
    text labels as well as colour. */
 :root {
   --bg: #f6f7f9;
@@ -420,4 +421,39 @@ td.over {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+
+.suggestions {
+  margin: 8px 0;
+}
+
+.suggestions-title {
+  font-weight: 600;
+  margin: 0 0 6px;
+}
+
+.suggestions ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.suggestions button {
+  text-align: left;
+}
+
+.affected-summary {
+  border: 1px solid #e7a3a3;
+  background: var(--bad-bg);
+  color: var(--bad-text);
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin: 8px 0 12px;
+}
+
+.affected-summary ul {
+  margin: 4px 0 0;
+  padding-left: 1.1rem;
 }

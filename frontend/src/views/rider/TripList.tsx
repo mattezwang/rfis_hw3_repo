@@ -2,11 +2,14 @@
 // Implements: FR-001 (trips, windows, status, pending), FR-003 (cancel with confirmation),
 // FR-005 and FR-007 (pending shows the original pickup still stands; not accepted shows the
 // dispatcher's reason), FR-008 (no routing details or other riders), FR-009, US1-5.
+// V2: FR-025 (own estimated arrival on each scheduled trip), FR-026 (times that would confirm
+// right away, after a decline).
 import { useEffect, useRef, useState } from 'react';
 import type { RiderTripView } from '../../domain/projections';
-import { fmtWindow } from '../../domain/time';
+import { fmt, fmtWindow } from '../../domain/time';
+import type { Minutes } from '../../domain/types';
 import { useAppState } from '../../state/AppState';
-import { ChangeForm } from './ChangeForm';
+import { ChangeForm, SuggestionList } from './ChangeForm';
 import type { Outcome } from './OutcomeStatus';
 
 const STATUS_TEXT = {
@@ -20,7 +23,7 @@ function tripTitle(t: RiderTripView): string {
   return `${t.pickupLabel} → ${t.dropoffLabel}`;
 }
 
-function StatusNote({ t }: { t: RiderTripView }) {
+function StatusNote({ t, onChoose }: { t: RiderTripView; onChoose: (start: Minutes) => void }) {
   if (t.pending && t.pending.requestedWindowStart !== null) {
     return (
       <p className="note note-pending">
@@ -33,11 +36,18 @@ function StatusNote({ t }: { t: RiderTripView }) {
   const latest = t.latest;
   if (latest?.status === 'not-accepted' && latest.requestedWindowStart !== null) {
     return (
-      <p className="note note-declined">
+      <div className="note note-declined">
         <strong>Change not accepted:</strong> your request for {fmtWindow(latest.requestedWindowStart)} was
         not accepted. Reason from the dispatcher: “{latest.declineReason}”. Your pickup is still{' '}
         {fmtWindow(t.windowStart)}.
-      </p>
+        {t.suggestions.length > 0 && (
+          <SuggestionList
+            suggestions={t.suggestions}
+            label="These times can be confirmed right away:"
+            onChoose={onChoose}
+          />
+        )}
+      </div>
     );
   }
   if (latest?.status === 'confirmed' && latest.kind === 'time-change') {
@@ -59,6 +69,7 @@ export function TripList({
 }) {
   const { cancel } = useAppState();
   const [changing, setChanging] = useState<string | null>(null);
+  const [startAt, setStartAt] = useState<Minutes | undefined>(undefined);
   const [confirmingCancel, setConfirmingCancel] = useState<string | null>(null);
   // After a change or cancellation finishes, return focus to that trip's heading so keyboard
   // and screen-reader users keep their place (FR-009).
@@ -92,16 +103,35 @@ export function TripList({
                 <dt>Pickup window</dt>
                 <dd>{t.trip.status === 'cancelled' ? '—' : fmtWindow(t.windowStart)}</dd>
               </div>
+              {t.estimatedArrival !== null && (
+                <div>
+                  <dt>Estimated arrival</dt>
+                  <dd>{fmt(t.estimatedArrival)}</dd>
+                </div>
+              )}
               <div>
                 <dt>Status</dt>
                 <dd>{t.pending ? 'Scheduled · change pending' : STATUS_TEXT[t.trip.status]}</dd>
               </div>
             </dl>
-            <StatusNote t={t} />
+            <StatusNote
+              t={t}
+              onChoose={(start) => {
+                setStartAt(start);
+                setChanging(id);
+              }}
+            />
 
             {t.canChange && changing !== id && confirmingCancel !== id && (
               <div className="actions">
-                <button type="button" onClick={() => setChanging(id)} disabled={Boolean(t.pending)}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setStartAt(undefined);
+                    setChanging(id);
+                  }}
+                  disabled={Boolean(t.pending)}
+                >
                   Change pickup time
                 </button>
                 <button type="button" className="secondary" onClick={() => setConfirmingCancel(id)}>
@@ -116,6 +146,7 @@ export function TripList({
             {changing === id && (
               <ChangeForm
                 trip={t}
+                initialStart={startAt}
                 onDone={(o) => {
                   setChanging(null);
                   setReturnFocusTo(id);

@@ -71,15 +71,38 @@ describe('computeImpact', () => {
   });
 });
 
-describe('toRiderPreview (FR-004, FR-008)', () => {
-  it('contains only the rider’s own window, estimate and approval need', () => {
+describe('toRiderPreview (FR-004, FR-008, V2: FR-025, FR-027)', () => {
+  it('contains only the rider’s own window, estimates and approval need', () => {
     const data = createSeed();
     const impact = computeImpact({ tripId: JANELLE_RETURN_TRIP, kind: 'time-change', newWindowStart: hm(15, 45) }, data);
     const preview = toRiderPreview(impact);
     expect(Object.keys(preview).sort()).toEqual(
-      ['estimatedPickup', 'needsApproval', 'newWindowEnd', 'newWindowStart', 'tripId'].sort(),
+      [
+        'estimatedArrival',
+        'estimatedPickup',
+        'needsApproval',
+        'newWindowEnd',
+        'newWindowStart',
+        'ownWindowUnreachable',
+        'tripId',
+      ].sort(),
     );
     expect(preview).toMatchObject({ newWindowStart: hm(15, 45), newWindowEnd: hm(16, 15), needsApproval: true });
     expect(JSON.stringify(preview)).not.toMatch(/Grace|Omar|Ruth|Luis|Mei/);
+  });
+});
+
+describe('V2 rider preview fields (FR-025, FR-027)', () => {
+  it('estimatedArrival is the requester’s own drop-off estimate', () => {
+    const impact = computeImpact({ tripId: JANELLE_RETURN_TRIP, kind: 'time-change', newWindowStart: hm(16, 30) }, createSeed());
+    const dropoff = impact.rows.find((r) => r.isRequester && r.kind === 'dropoff')!;
+    const preview = toRiderPreview(impact);
+    expect(preview.estimatedArrival).toBe(dropoff.after);
+    expect(preview.ownWindowUnreachable).toBe(false);
+  });
+
+  it('flags an unreachable own window (15:30)', () => {
+    const impact = computeImpact({ tripId: JANELLE_RETURN_TRIP, kind: 'time-change', newWindowStart: hm(15, 30) }, createSeed());
+    expect(toRiderPreview(impact).ownWindowUnreachable).toBe(true);
   });
 });

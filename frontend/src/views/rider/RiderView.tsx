@@ -9,9 +9,9 @@ import { TripList } from './TripList';
 import { OutcomeStatus, type Outcome } from './OutcomeStatus';
 
 export function RiderView() {
-  const { data } = useAppState();
+  const { data, now } = useAppState();
   const [outcome, setOutcome] = useState<Outcome | null>(null);
-  const trips = riderTrips(data, RIDER_ID);
+  const trips = riderTrips(data, RIDER_ID, now);
 
   return (
     <section aria-labelledby="rider-heading" className="view">

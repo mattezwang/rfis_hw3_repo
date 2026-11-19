@@ -1,6 +1,6 @@
 // App shell: role switcher, simulated clock, reset.
 // Implements: PR-001 (switch between rider, dispatcher and driver views), PR-002 (reset demo),
-// A-8 (no sign-in; roles switched in the interface), A-17 (simulated clock shown).
+// A-8 (no sign-in; roles switched in the interface), A-17 (simulated time shown, fixed in V2).
 import { useState } from 'react';
 import { useAppState } from './state/AppState';
 import { fmt } from './domain/time';
@@ -28,7 +28,7 @@ export function App() {
         <div>
           <h1>Same-Day Trip Changes</h1>
           <p className="subtitle">
-            Prototype V1 · mock data for one service day · simulated time{' '}
+            Prototype V2 · mock data for one service day · simulated time (fixed){' '}
             <strong>
               <time>{fmt(now)}</time>
             </strong>
