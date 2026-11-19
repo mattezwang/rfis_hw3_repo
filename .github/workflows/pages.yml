@@ -1,0 +1,66 @@
+# Deploys every released prototype version to GitHub Pages, each at its own URL:
+#   https://<owner>.github.io/<repo>/v1/   built from tag v1.0
+#   https://<owner>.github.io/<repo>/v2/   built from tag v2.0 (once it exists)
+# Each version is built from its own tag, so the V1 site stays frozen while work continues on
+# main. Runs on pushes to main (the github-pages environment only accepts the default branch).
+name: Deploy prototypes to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # needs the version tags
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Build each tagged version
+        run: |
+          set -euo pipefail
+          mkdir -p _site
+          cp deploy/landing.html _site/index.html
+          for v in v1 v2; do
+            tag="refs/tags/$v.0"
+            if git rev-parse -q --verify "$tag" >/dev/null; then
+              echo "Building $v from tag $v.0"
+              git worktree add --detach "$RUNNER_TEMP/$v" "$tag"
+              (cd "$RUNNER_TEMP/$v/frontend" && npm ci && npm test && npm run build)
+              cp -r "$RUNNER_TEMP/$v/frontend/dist" "_site/$v"
+            else
+              echo "Tag $v.0 not found; leaving $v off the landing page"
+              sed -i "/data-version=\"$v\"/d" _site/index.html
+            fi
+          done
+          touch _site/.nojekyll
+          find _site -maxdepth 2 | sort
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -16,9 +16,9 @@ manager (Diane), modelled as goal models in Assignment 2, and specified and buil
 
 | # | Deliverable | Link |
 |---|---|---|
-| 1 | GitHub Version 1 (goal model, spec, Spec Kit artifacts, source) | [`v1` branch](https://github.com/mattezwang/rfis_hw3_repo/tree/v1) |
+| 1 | GitHub Version 1 (goal model, spec, Spec Kit artifacts, source) | [`v1` branch](https://github.com/mattezwang/rfis_hw3_repo/tree/v1) (tag `v1.0`) |
 | 2 | GitHub Version 2 | *To be added in Step 5* |
-| 3 | Prototype V1 (deployed) | *Deployment URL to be added* |
+| 3 | Prototype V1 (deployed) | <https://mattezwang.github.io/rfis_hw3_repo/v1/> |
 | 4 | Prototype V2 (deployed) | *To be added in Step 5* |
 | 5 | Requirements analysis and learning log | [docs/learning-log.md](docs/learning-log.md) *(to be written in Step 6)* |
 
@@ -34,6 +34,12 @@ manager (Diane), modelled as goal models in Assignment 2, and specified and buil
 | [.specify/memory/constitution.md](.specify/memory/constitution.md) | Spec Kit constitution: traceability, sprint boundary, preserving conflicts, spec before code |
 | [specs/001-same-day-changes/](specs/001-same-day-changes/) | Spec Kit artifacts: [spec](specs/001-same-day-changes/spec.md), [plan](specs/001-same-day-changes/plan.md), [research](specs/001-same-day-changes/research.md), [data model](specs/001-same-day-changes/data-model.md), [contract](specs/001-same-day-changes/contracts/decision-module.md), [tasks](specs/001-same-day-changes/tasks.md), [analysis](specs/001-same-day-changes/analysis.md), [quickstart](specs/001-same-day-changes/quickstart.md) |
 | [frontend/](frontend/) | Prototype source (React, TypeScript, Vite). Decision logic is in [frontend/src/domain/](frontend/src/domain/) |
+
+## Deployment
+
+Both prototypes are published by GitHub Pages from [.github/workflows/pages.yml](.github/workflows/pages.yml).
+Each version is built from its own tag (`v1.0`, `v2.0`), so the V1 site stays as it was when V1 was
+frozen. Landing page: <https://mattezwang.github.io/rfis_hw3_repo/>
 
 ## Run the prototype locally
 
