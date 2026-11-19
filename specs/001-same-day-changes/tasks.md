@@ -77,7 +77,7 @@ Web app, front end only: `frontend/src/`, `frontend/tests/` (plan.md, Project St
 - [ ] T014 [US1] Implement `computeImpact` in `frontend/src/domain/impact.ts`: re-sequence with the change applied, simulate before and after, and produce ImpactRows, `othersOutsideWindow`, `capacityExceeded` and `requesterOutsideWindow` (FR-010, FR-013, FR-015, A-15)
 - [ ] T015 [US1] Implement `decideChange` in `frontend/src/domain/decide.ts` with the full decision table in contracts/decision-module.md (FR-011, FR-012, FR-013, FR-014)
 - [ ] T016 [US1] Implement `toRiderPreview` in `frontend/src/domain/projections.ts`, with fields limited to data-model.md `RiderPreview` (FR-004, FR-008)
-- [ ] T017 [US1] Implement `submitTimeChange` in `frontend/src/domain/store.ts`, confirm path: validate (A-11, A-12), compute impact, apply the new window, re-sequence the run, set `Stop.changeMark` to `changed` on the requester's stops, and write `submitted` and `confirmed` ChangeRecords with actor `system` for the decision (FR-002, FR-005, FR-020, FR-022, FR-024)
+- [ ] T017 [US1] Implement `submitTimeChange` in `frontend/src/domain/store.ts`, confirm path: validate the request (data-model.md `ChangeRequest.requestedWindowStart` validation; A-11, A-12), compute impact, apply the new window, re-sequence the run, set data-model.md `Stop.changeMark` to `changed` on the requester's stops, and write `submitted` and `confirmed` ChangeRecords (data-model.md `ChangeRecord.event`, `ChangeRecord.actorRole`) with actor `system` for the decision (FR-002, FR-005, FR-020, FR-022, FR-024)
 - [ ] T018 [US1] Build the rider view in `frontend/src/views/rider/`: `RiderView.tsx`, `TripList.tsx` (today's trips with window and status, actions only on `scheduled` trips; FR-001), `ChangeForm.tsx` (labelled time input, preview of own new window and approval need from `toRiderPreview`; FR-002, FR-004) and `OutcomeStatus.tsx` (`aria-live` region with text status: confirmed, not accepted with reason, or pending; FR-005, FR-006, FR-009)
 
 **Checkpoint**: US1 works on its own. S1 passes. Quickstart V1–V4 behave as described.
@@ -98,8 +98,8 @@ Web app, front end only: `frontend/src/`, `frontend/tests/` (plan.md, Project St
 ### Implementation for User Story 2
 
 - [ ] T021 [US2] Extend `submitTimeChange` in `frontend/src/domain/store.ts` with the route path: create a `pending` ChangeRequest with its decision reasons, leave the trip and stops unchanged, and write `submitted` and `routed` records (FR-007, FR-012, FR-013, A-7)
-- [ ] T022 [US2] Implement `acceptChange` and `declineChange` in `frontend/src/domain/store.ts` per contracts/decision-module.md (FR-018, FR-019, FR-022, FR-023, A-16)
-- [ ] T023 [US2] Build the dispatcher view in `frontend/src/views/dispatcher/`: `DispatcherView.tsx`, `PendingQueue.tsx` (ordered by requested pickup time; FR-016), `ImpactTable.tsx` (data-model.md `ImpactRow` fields: before and after times, window, outside-window flag, onboard seats and wheelchairs against capacity, mobility note; FR-017) and `DecisionPanel.tsx` (Accept, and Decline with a required reason, shown only beside the impact table; FR-018, FR-019)
+- [ ] T022 [US2] Implement `acceptChange` and `declineChange` in `frontend/src/domain/store.ts` per contracts/decision-module.md: accept recomputes the impact (A-16), applies the change and sets `Stop.changeMark`. Decline requires and stores a non-empty data-model.md `ChangeRequest.declineReason`. Both write `accepted` or `declined` records (data-model.md `ChangeRecord.event`, `ChangeRecord.actorRole` = `dispatcher`) (FR-018, FR-019, FR-020, FR-022, FR-023)
+- [ ] T023 [US2] Build the dispatcher view in `frontend/src/views/dispatcher/`: `DispatcherView.tsx`, `PendingQueue.tsx` (ordered by requested pickup time; FR-016), `ImpactTable.tsx` (data-model.md `ImpactRow` fields: before and after times, window, outside-window flag, onboard seats and wheelchairs against capacity, mobility note; FR-017) and `DecisionPanel.tsx` (Accept, and Decline with a required reason, shown only beside the impact table; FR-018, FR-019). The impact shown is obtained by calling `computeImpact` on the current state each time a pending change is displayed (A-16). Components contain no impact or decision logic of their own (FR-015, Principle V)
 - [ ] T024 [US2] Extend the rider view in `frontend/src/views/rider/` to show pending with "your original pickup still stands" and to show not accepted with the dispatcher's reason, never the routing details (FR-005, FR-007, FR-008)
 
 **Checkpoint**: US1 and US2 both work on their own.
@@ -118,7 +118,7 @@ Web app, front end only: `frontend/src/`, `frontend/tests/` (plan.md, Project St
 
 ### Implementation for User Story 3
 
-- [ ] T026 [US3] Implement `cancelTrip` in `frontend/src/domain/store.ts`: withdraw any pending request, set the trip to `cancelled`, set `Stop.changeMark` to `removed`, and write records (FR-003, FR-014, FR-020, FR-024)
+- [ ] T026 [US3] Implement `cancelTrip` in `frontend/src/domain/store.ts`: withdraw any pending request, set the trip to `cancelled`, set data-model.md `Stop.changeMark` to `removed`, and write `withdrawn`, `cancelled` and `confirmed` records (data-model.md `ChangeRecord.event`, `ChangeRecord.actorRole`) (FR-003, FR-014, FR-020, FR-024)
 - [ ] T027 [US3] Add a Cancel action with a confirmation step to `frontend/src/views/rider/TripList.tsx`, and the outcome to `OutcomeStatus.tsx` (FR-003, FR-009)
 
 **Checkpoint**: US1 to US3 work on their own.

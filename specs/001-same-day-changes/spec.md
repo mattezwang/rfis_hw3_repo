@@ -127,7 +127,7 @@ Each requirement lists the goals it satisfies and its evidence.
 
 **Rider: viewing, changing and cancelling trips**
 
-- **FR-001**: The system MUST show the rider each of their trips for the current service day, with pickup location, pickup window and status (scheduled, picked up, completed, cancelled, change pending).
+- **FR-001**: The system MUST show the rider each of their trips for the current service day, with pickup location, pickup window, trip status (scheduled, picked up, completed, cancelled) and whether a change to it is pending.
   *Goals: G-9 · Evidence: "I want to book and change rides online" (Janelle 00:38:44)*
 - **FR-002**: The rider MUST be able to request a new pickup time for any same-day trip that has not been picked up.
   *Goals: G-12 · Evidence: "I needed to change my pickup that same day" (Janelle 00:32:01) · A-5, A-6*

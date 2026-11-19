@@ -44,8 +44,8 @@ to 30 stops, far inside the one-minute requirement (FR-006, SC-002).
 it can be served from any static host or subpath. Time comes from an injectable simulated clock
 (A-17).
 
-**Scale/Scope**: One service day, one rider persona with two trips, about 8 other riders, 2
-afternoon runs, about 20 stops per run, three views.
+**Scale/Scope**: One service day, one rider persona with two trips, about 8 other riders, a
+completed morning run and 2 afternoon runs, 10–20 stops per run, three views.
 
 ## Constitution Check
 

@@ -80,6 +80,7 @@ Travel time between two locations is looked up in a seeded table (research.md R-
 ### RouteImpact (calculated, never stored as the source of truth)
 | Field | Type | Notes |
 |---|---|---|
+| requestKind | `time-change` \| `cancel` | Needed by the decision rule (cancellations always confirm) |
 | rows | ImpactRow[] | One per stop on the run after the change |
 | capacityExceeded | boolean | Any point on the run over seats or wheelchair positions |
 | othersOutsideWindow | string[] | Trip IDs of other riders pushed outside their window |
@@ -145,7 +146,8 @@ picked-up / completed: seeded only; no transitions in this feature
 
 The seed contains one service day, simulated clock starting at 14:30 (A-17):
 
-- **Janelle** (`wheelchair-large`, boarding 7 min): morning trip home → Office Park, `completed`.
+- **Janelle** (`wheelchair-large`, boarding 7 min): morning trip home → Office Park, `completed`,
+  on morning run **R-3** (all stops completed).
   Return trip Office Park → home, window **17:00–17:30**, on run **R-12**.
 - **Run R-12** (van V-07: 6 seats, 2 wheelchair positions, driver Dana Morales): pull-out 14:00,
   two stops already completed. Its afternoon riders include two wheelchair users whose trips
