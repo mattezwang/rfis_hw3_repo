@@ -39,7 +39,7 @@ Unchanged and still open on purpose: O-5 (Q-6), O-6 (Q-7), O-7 (Q-2), O-8 (Q-3),
 | V19 | 15:15 declined with a reason: the trip shows the reason and 3 times that confirm now. Choosing one confirms |
 | V20 | 15:45 pending: the summary reads "Grace T.: pickup would be 16:25, after their window ends at 16:20". For 15:15 it also lists Ruth and Luis as on board while over capacity |
 | V21 | Stored state from 3 hours earlier still shows 14:30 |
-| V22 | *Pending deployment.* V2's code uses its own storage key (`same-day-changes:v2`, V1 uses `same-day-changes:v1`). To be confirmed on the live site |
+| V22 | Confirmed on the live site: a change confirmed in V2 (16:00) did not appear in V1, which still showed 17:00. A change left pending in V1 did not appear in V2. The browser holds `same-day-changes:v1` and `same-day-changes:v2` separately. *(Checked after the `v2.0` tag, so the copy of this file in the tag still says pending.)* |
 
 - **Regression:** V1 scenarios (S1–S4, accept, decline, cancel, the manifest) behave as before. The keyboard-only
   flow works end to end, including choosing a suggestion, with focus kept on the task at every step.
