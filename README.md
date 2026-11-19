@@ -30,7 +30,9 @@ manager (Diane), modelled as goal models in Assignment 2, and specified and buil
 | [docs/models/goal_model_sprint.py](docs/models/goal_model_sprint.py) | Sprint goal model (`goalmodeling` framework), with a [diagram link](docs/models/sprint-mermaid.txt) |
 | [docs/models/hw2-baseline/](docs/models/hw2-baseline/) | Assignment 2 goal models, use cases and traceability matrix (the source of goal IDs) |
 | [docs/interviews/](docs/interviews/) | Interview transcripts (Assignment 1) |
-| [docs/v1-build-notes.md](docs/v1-build-notes.md) | Requirements observations logged while building V1, for the Step 4 evaluation |
+| [docs/traceability.md](docs/traceability.md) | Requirements Traceability Matrix: transcript → goal → requirement → code → status, for V1 (Step 4) |
+| [docs/evaluation-v1.md](docs/evaluation-v1.md) | Evaluation of Prototype V1: observations classified as implementation defects or requirements issues (Step 4) |
+| [docs/v1-build-notes.md](docs/v1-build-notes.md) | Requirements observations logged while building V1, input to the Step 4 evaluation |
 | [.specify/memory/constitution.md](.specify/memory/constitution.md) | Spec Kit constitution: traceability, sprint boundary, preserving conflicts, spec before code |
 | [specs/001-same-day-changes/](specs/001-same-day-changes/) | Spec Kit artifacts: [spec](specs/001-same-day-changes/spec.md), [plan](specs/001-same-day-changes/plan.md), [research](specs/001-same-day-changes/research.md), [data model](specs/001-same-day-changes/data-model.md), [contract](specs/001-same-day-changes/contracts/decision-module.md), [tasks](specs/001-same-day-changes/tasks.md), [analysis](specs/001-same-day-changes/analysis.md), [quickstart](specs/001-same-day-changes/quickstart.md) |
 | [frontend/](frontend/) | Prototype source (React, TypeScript, Vite). Decision logic is in [frontend/src/domain/](frontend/src/domain/) |
